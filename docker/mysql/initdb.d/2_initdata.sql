@@ -1,2 +1,2 @@
-INSERT INTO customer(first_name, last_name) VALUES('Tarou', 'Tanaka');
-INSERT INTO customer(first_name, last_name) VALUES('Jiro', 'Suzuki');
+INSERT INTO task_user(last_name, first_name, mail_address,password,created_src,updated_src) VALUES ('Tanaka', 'Tarou','aaa@gmail.com','password','testUser','test_user');
+INSERT INTO task_user(last_name, first_name, mail_address,password,created_src,updated_src) VALUES ('Satou', 'Kazuya','bbb@gmail.com','password2','testUser','test_user');

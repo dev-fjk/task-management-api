@@ -30,8 +30,8 @@
 $ cd docker
 $ docker-compose up -d --build
 
-※ コンテナ起動時に initdb.dディレクトリ配下に置かれたsqlファイルを読み込む設定となっているので
-コンテナ起動の度にデータは初期化されます。
+※ 初期化したい場合は dockerのコンテナを削除してから再度上記のコマンドを打ち込み imageを再作成する
+docker/mysql/initdb.d ディレクトリに配置されているsqlが初期データとして投入されます。
 ~~~
 
 ## checkStyle
