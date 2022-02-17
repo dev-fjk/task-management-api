@@ -1,4 +1,4 @@
-package com.gradle.example.application
+package api.management.task.application
 
 import spock.lang.Specification
 

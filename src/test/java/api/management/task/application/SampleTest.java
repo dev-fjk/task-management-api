@@ -1,4 +1,4 @@
-package com.gradle.example.application;
+package api.management.task.application;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

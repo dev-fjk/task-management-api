@@ -1,2 +1,3 @@
-# spring-gradle-template
-gradle使用時のテンプレートリポジトリ
+# task-management-api
+ユーザーのタスク管理情報管理用のAPI
+

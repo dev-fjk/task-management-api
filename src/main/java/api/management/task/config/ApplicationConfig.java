@@ -1,4 +1,4 @@
-package com.gradle.example.config;
+package api.management.task.config;
 
 import java.time.Clock;
 import java.time.ZoneId;
@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Profile;
 @Profile("!test")
 @Configuration
 public class ApplicationConfig {
-
 
     // 日本向けTimeZoneの設定
     private static final String JP_TIME_ZONE = "Asia/Tokyo";
