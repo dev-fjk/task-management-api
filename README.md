@@ -2,7 +2,7 @@
 ユーザーのタスク管理情報管理用のAPI
 
 ## API仕様書(Swagger UI)
-- [git hub pages](https://dev-fjk.github.io/miko-quiz-api/)
+- [git hub pages](https://dev-fjk.github.io/task-management-api/)
 - [ローカル(ビルドが必要)](http://localhost:8080/swagger-ui/index.html)
 
 ### API仕様書の更新方法
