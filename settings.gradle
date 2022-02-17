@@ -1,2 +1,1 @@
-// project名
-rootProject.name = 'spring-gradle-template'
+rootProject.name = 'task-management-api'

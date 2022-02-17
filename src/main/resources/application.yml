@@ -1,7 +1,7 @@
 ---
 spring:
   application:
-    name: spring-gradle-template
+    name: task-management-api
   messages:
     encoding: UTF-8
   jackson:
@@ -9,7 +9,21 @@ spring:
 
 logging:
   level:
-    web: debug
+    root: info
+
+# https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: false
+    tags-sorter: method
+    defaultModelRendering: example
+    doc-expansion: list
+    config-url: /v3/api-docs/swagger-config
+    url: /v3/api-docs
 
 ---
 # -Dspring.profiles.activeを指定しなかった場合に実行される application.ymlの指定

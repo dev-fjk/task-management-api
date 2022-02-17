@@ -1,0 +1,8 @@
+---
+spring:
+  application:
+    name: task-management-api
+  messages:
+    encoding: UTF-8
+  jackson:
+    time-zone: "Asia/Tokyo"
