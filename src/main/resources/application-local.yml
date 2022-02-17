@@ -1,13 +1,10 @@
 ---
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: dbc:h2:mem:;
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true  
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3314/demo_db
+    username: user
+    password: password
 
 logging:
   level:

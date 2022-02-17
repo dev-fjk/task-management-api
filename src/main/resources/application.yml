@@ -11,6 +11,20 @@ logging:
   level:
     root: info
 
+mybatis:
+  mapper-locations: api.management.task.infrastructure.mapper.*.xml
+  configuration:
+    # スネークケースからキャメルケースへの変換設定
+    map-underscore-to-camel-case: true
+    # AS句で設定された列名をマップする設定
+    use-column-label: true
+    # フェッチサイズ
+    default-fetch-size: 1000
+    # DBからの応答タイムアウト値　秒
+    default-statement-timeout: 20
+    # 取得した列が全てNullだった場合空のインスタンスを返却する(NPE防止)
+    return-instance-for-empty-row: true
+
 # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
 springdoc:
   api-docs:

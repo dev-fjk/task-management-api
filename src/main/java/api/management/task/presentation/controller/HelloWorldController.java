@@ -1,6 +1,7 @@
 package api.management.task.presentation.controller;
 
 import api.management.task.application.common.constant.OpenApiConstant;
+import api.management.task.infrastructure.mapper.CustomerMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = HelloWorldController.BASE_PATH, description = "動作チェック用コントローラ")
 public class HelloWorldController {
 
-
     public static final String BASE_PATH = "mock/v1/";
+
+    // FIXME DB接続確認要に直でMapperを呼んでいる
+    private final CustomerMapper customerMapper;
 
     @GetMapping(path = "/hello")
     @ResponseStatus(HttpStatus.OK)
@@ -41,7 +44,7 @@ public class HelloWorldController {
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
     public String get() {
+        System.out.println(customerMapper.findAll());
         return "Hello World";
     }
-
 }

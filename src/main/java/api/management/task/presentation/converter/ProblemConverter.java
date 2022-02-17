@@ -12,9 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 
+/**
+ * ハンドリングされたエラーから 異常系のレスポンスへ変換を行うクラス
+ */
 @Component
 public class ProblemConverter {
-
 
     /**
      * リクエスト時のValidationエラーを返却する
