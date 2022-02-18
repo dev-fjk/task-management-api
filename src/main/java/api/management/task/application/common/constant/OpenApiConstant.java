@@ -7,5 +7,6 @@ public class OpenApiConstant {
     public static final String BAD_REQUEST = "badRequest";
     public static final String UNAUTHORIZED = "unauthorized";
     public static final String FORBIDDEN = "forbidden";
+    public static final String TASK_NOT_FOUND = "taskNotFound";
     public static final String INTERNAL_SERVER_ERROR = "internalServerError";
 }

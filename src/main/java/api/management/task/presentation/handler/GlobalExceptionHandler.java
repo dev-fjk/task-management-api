@@ -1,5 +1,6 @@
 package api.management.task.presentation.handler;
 
+import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.presentation.converter.ProblemConverter;
 import api.management.task.presentation.model.response.ProblemResponse;
 import java.nio.file.AccessDeniedException;
@@ -52,6 +53,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ProblemResponse> handleAccessDeniedException(AccessDeniedException exception) {
         return this.errorResponses(HttpStatus.FORBIDDEN, problemConverter.convert(exception));
+    }
+
+    /**
+     * リソースが見つからない場合のエラー
+     *
+     * @param exception {@link ResourceNotFoundException}
+     * @return エラーレスポンス
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ProblemResponse> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        return this.errorResponses(HttpStatus.NOT_FOUND, problemConverter.convert(exception));
     }
 
     /**

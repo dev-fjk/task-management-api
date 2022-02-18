@@ -1,5 +1,6 @@
 package api.management.task.presentation.converter;
 
+import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.presentation.model.response.ProblemResponse;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -61,6 +62,20 @@ public class ProblemConverter {
     }
 
     /**
+     * 404エラーを返す
+     *
+     * @param exception {@link ResourceNotFoundException}
+     * @return {@link ProblemResponse}
+     */
+    public ProblemResponse convert(ResourceNotFoundException exception) {
+        return ProblemResponse.builder()
+                .title("リクエストされたリソースは見つかりませんでした")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail(exception.getMessage())
+                .build();
+    }
+
+    /**
      * catchされなかったエラーを返す
      *
      * @param exception {@link RuntimeException}
@@ -75,7 +90,7 @@ public class ProblemConverter {
     }
 
     /**
-     * BindingResult使用時のバリデーションエラーの詳細を作成して変九役する
+     * BindingResult使用時のバリデーションエラーの詳細を作成して変換
      *
      * @param errors : FieldErrors
      * @return エラー詳細
@@ -87,7 +102,7 @@ public class ProblemConverter {
     }
 
     /**
-     * Validator使用時のバリデーションエラーの詳細を作成して変九役する
+     * Validator使用時のバリデーションエラーの詳細を作成して変換
      *
      * @param violations : ConstraintViolationのセット
      * @return エラー詳細
@@ -97,5 +112,4 @@ public class ProblemConverter {
                 .map(v -> v.getPropertyPath() + " は " + v.getMessage() + ": " + v.getInvalidValue())
                 .collect(Collectors.joining(", "));
     }
-
 }

@@ -5,6 +5,8 @@
 - JDK 11
 - Groovy 3.0
 - Gradle
+- Spock Framework
+- Junit5
 
 ※ IntelliJならIDE上で全てインストール可能
 
@@ -32,6 +34,18 @@ $ docker-compose up -d --build
 
 ※ 初期化したい場合は dockerのコンテナを削除してから再度上記のコマンドを打ち込み imageを再作成する
 docker/mysql/initdb.d ディレクトリに配置されているsqlが初期データとして投入されます。
+~~~
+
+## UTについて
+- SpockとJUintを気分で使い分ける
+    - ただし精神的に辛いので JUnitもgroovyで書く
+- 以下の命名規則からどちらを使用しているかクラス名から判別可能 
+    - どうしてもjavaでJUnit書いて勉強したい場合は src/test/パッケージの下に javaパッケージを切ればjavaで動作させることが出来る 
+~~~
+■ Junit5
+~Test.groovy
+■ Spock
+~Spec.groovy
 ~~~
 
 ## checkStyle
