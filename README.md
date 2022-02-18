@@ -5,10 +5,6 @@
 - JDK 11
 - Groovy 3.0
 - Gradle
-- Spock Framework
-- Junit5
-
-※ IntelliJならIDE上で全てインストール可能
 
 ## API仕様書(Swagger UI)
 - [git hub pages](https://dev-fjk.github.io/task-management-api/)
