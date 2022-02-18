@@ -16,5 +16,5 @@ public interface TaskRepository {
      * @param taskId タスクID
      * @return {@link TaskDetail}
      */
-    TaskDetail fetchUserTask(long userId, long taskId);
+    Optional<TaskDetail> fetchUserTask(long userId, long taskId);
 }

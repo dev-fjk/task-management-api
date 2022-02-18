@@ -15,4 +15,5 @@ public interface ResponseConverter {
      * @return ユーザーのタスク情報レスポンス
      */
     UserTaskResponse convert(TaskResult taskResult);
+
 }

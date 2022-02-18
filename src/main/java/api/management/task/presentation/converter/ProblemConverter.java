@@ -1,5 +1,6 @@
 package api.management.task.presentation.converter;
 
+import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.presentation.model.response.ProblemResponse;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -57,6 +58,20 @@ public class ProblemConverter {
                 .title(exception.getMessage())
                 .status(HttpStatus.FORBIDDEN.value())
                 .detail("アクセスが拒否されました")
+                .build();
+    }
+
+    /**
+     * 404エラーを返す
+     *
+     * @param exception {@link ResourceNotFoundException}
+     * @return {@link ProblemResponse}
+     */
+    public ProblemResponse convert(ResourceNotFoundException exception) {
+        return ProblemResponse.builder()
+                .title("リクエストされたリソースは見つかりませんでした")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail(exception.getMessage())
                 .build();
     }
 

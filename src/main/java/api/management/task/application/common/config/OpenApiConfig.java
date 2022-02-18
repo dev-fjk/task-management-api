@@ -70,6 +70,12 @@ public class OpenApiConfig {
                 .detail("アクセスする権限がありません")
                 .build()
         );
+        var taskNotFound = problemContent(objectMapper, ProblemResponse.builder()
+                .title("リクエストされたリソースは見つかりませんでした")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail("タスク情報が見つかりませんでした")
+                .build()
+        );
         var internalServerErrorContent = problemContent(objectMapper, ProblemResponse.builder()
                 .title("リクエストされた操作を完了できませんでした")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -83,6 +89,8 @@ public class OpenApiConfig {
                         .description("認証情報がリクエストに付与されていない").content(unauthorizedContent))
                 .addResponses(OpenApiConstant.FORBIDDEN, new ApiResponse()
                         .description("許可されていないアクセス").content(forbiddenContent))
+                .addResponses(OpenApiConstant.TASK_NOT_FOUND, new ApiResponse()
+                        .description("タスクが見つからない").content(taskNotFound))
                 .addResponses(OpenApiConstant.INTERNAL_SERVER_ERROR, new ApiResponse()
                         .description("処理が正常に終了しなかった").content(internalServerErrorContent));
     }
