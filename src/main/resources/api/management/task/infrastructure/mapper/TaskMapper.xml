@@ -2,4 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="api.management.task.infrastructure.mapper.TaskMapper">
 
+    <!-- Result Mapで変換設定を記載 -->
+    <resultMap type="api.management.task.infrastructure.entity.TaskDetail" id="TaskDetailMap">
+        <id property="taskId" column="task_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="statusId" column="status_id" jdbcType="INTEGER"/>
+        <result property="priorityId" column="priority_id" jdbcType="INTEGER"/>
+        <result property="startDate" column="start_date" jdbcType="DATE"/>
+        <result property="endDate" column="end_date" jdbcType="DATE"/>
+        <result property="termDate" column="term_date" jdbcType="DATE"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="priority" column="priority" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- ユーザーの単体のタスク詳細情報を取得 -->
+    <select id="fetchUserTaskDetail" resultMap="TaskDetailMap">
+        SELECT
+            t.task_id,
+            t.user_id,
+            t.status_id,
+            t.priority_id,
+            t.start_date,
+            t.end_date,
+            t.term_date,
+            s.status,
+            p.priority
+        FROM
+            task t
+                INNER JOIN
+                task_status_master s
+                ON t.status_id = s.status_id
+                INNER JOIN
+                task_priority_master p
+                ON t.priority_id = p.priority_id
+        WHERE
+            t.task_id = #{taskId}
+          AND
+            t.user_id = #{userId}
+          AND
+            t.is_deleted = '0'
+    </select>
 </mapper>

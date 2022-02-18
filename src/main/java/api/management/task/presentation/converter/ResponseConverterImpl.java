@@ -15,8 +15,6 @@ public class ResponseConverterImpl implements ResponseConverter {
      * {@inheritDoc}
      */
     public UserTaskResponse convert(TaskResult taskResult) {
-        if(StringUtils.hasText(taskResult))
-
         return UserTaskResponse.of(taskResult);
     }
 }

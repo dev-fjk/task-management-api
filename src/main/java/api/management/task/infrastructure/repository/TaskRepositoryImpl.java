@@ -20,6 +20,6 @@ public class TaskRepositoryImpl implements TaskRepository {
      */
     @Override
     public TaskDetail fetchUserTask(long userId, long taskId) {
-        return null;
+        return taskMapper.fetchUserTaskDetail(userId, taskId);
     }
 }

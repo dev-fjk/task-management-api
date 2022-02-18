@@ -3,11 +3,13 @@ package api.management.task.infrastructure.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * タスクテーブル Entity
  */
 @Getter
+@ToString
 public class Task {
 
     private long taskId;
@@ -32,4 +34,9 @@ public class Task {
 
     private String updatedBy;
 
+    private LocalDateTime deletedAt;
+
+    private String deletedBy;
+
+    private boolean isDeleted;
 }
