@@ -75,7 +75,7 @@ public class ProblemConverter {
     }
 
     /**
-     * BindingResult使用時のバリデーションエラーの詳細を作成して変九役する
+     * BindingResult使用時のバリデーションエラーの詳細を作成して変換
      *
      * @param errors : FieldErrors
      * @return エラー詳細
@@ -87,7 +87,7 @@ public class ProblemConverter {
     }
 
     /**
-     * Validator使用時のバリデーションエラーの詳細を作成して変九役する
+     * Validator使用時のバリデーションエラーの詳細を作成して変換
      *
      * @param violations : ConstraintViolationのセット
      * @return エラー詳細
@@ -97,5 +97,4 @@ public class ProblemConverter {
                 .map(v -> v.getPropertyPath() + " は " + v.getMessage() + ": " + v.getInvalidValue())
                 .collect(Collectors.joining(", "));
     }
-
 }

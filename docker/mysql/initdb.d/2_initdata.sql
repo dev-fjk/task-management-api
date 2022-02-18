@@ -16,15 +16,15 @@ VALUES
 INSERT INTO
     task_status_master(status_id, status, created_by, updated_by)
 VALUES
-    (2, 'Progress', 'admin', 'admin');
+    (2, 'PROGRESS', 'admin', 'admin');
 INSERT INTO
     task_status_master(status_id, status, created_by, updated_by)
 VALUES
-    (3, 'Wait', 'admin', 'admin');
+    (3, 'WAIT', 'admin', 'admin');
 INSERT INTO
     task_status_master(status_id, status, created_by, updated_by)
 VALUES
-    (4, 'Resolved', 'admin', 'admin');
+    (4, 'RESOLVED', 'admin', 'admin');
 
 -- 優先度 マスタ
 INSERT INTO
