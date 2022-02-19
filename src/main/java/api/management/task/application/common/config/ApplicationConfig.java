@@ -2,6 +2,7 @@ package api.management.task.application.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import java.time.Clock;
 import java.time.ZoneId;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,9 @@ public class ApplicationConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         // 空Jsonの作成時に例外を発生させない
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        // java8の日付クラスへの変換時に例外を発生させない設定
+        // FIXME JSR310Moduleが非推奨になっていたので代替方法を調べる
+        objectMapper.registerModule(new JSR310Module());
         return objectMapper;
     }
 }
