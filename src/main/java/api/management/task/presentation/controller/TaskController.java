@@ -103,8 +103,9 @@ public class TaskController {
         // GETのため 検索条件はクエリパラメータからバラバラの引数として受け取り helperで検索条件をマージしている
         // 後々 検索条件がかなり複雑になりそうであれば FacadeService経由で変換用のサービスを切ってもいいかもしれない(現状はユーザーIDだけ)
         final TaskListSelector selector = taskListSelectorHelper.selector(userId);
-        return ResponseEntity.ok(responseConverter.convert(
-                taskService.fetchUserTaskList(selector, (offset - 1), limit)
-        ));
+        return ResponseEntity.ok(
+                // DBへの検索用にServiceには取得開始位置を -1 して渡す
+                responseConverter.convert(offset, taskService.fetchUserTaskList(selector, (offset - 1), limit))
+        );
     }
 }

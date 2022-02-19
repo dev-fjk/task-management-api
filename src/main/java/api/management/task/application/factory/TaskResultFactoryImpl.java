@@ -27,10 +27,9 @@ public class TaskResultFactoryImpl implements TaskResultFactory {
      * {@inheritDoc}
      */
     @Override
-    public TaskResultList factory(int total, int offset, List<TaskDetail> detailList) {
+    public TaskResultList factory(int total, List<TaskDetail> detailList) {
         return TaskResultList.builder()
                 .total(total)
-                .offset(offset)
                 .taskResultList(detailList.stream()
                         .map(this::mapToResult).collect(Collectors.toList())
                 ).build();

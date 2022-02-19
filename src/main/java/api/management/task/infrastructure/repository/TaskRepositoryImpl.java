@@ -40,12 +40,13 @@ public class TaskRepositoryImpl implements TaskRepository {
      */
     @Override
     public TaskResultList fetchUserTaskList(TaskListSelector selector, int offset, int limit) {
-        final int total = taskMapper.userTaskCount(selector.getUserId());
+        // タスクの総件数を取得 後続のタスク情報一覧を取得する際と同じ条件をwhere句に指定する
+        final int total = taskMapper.userTaskCount(selector);
         if (total == 0) {
-            return TaskResultList.empty(offset);
+            return TaskResultList.empty();
         }
         return taskResultFactory.factory(
-                total, offset, taskMapper.fetchUserTaskDetailList(selector, offset, limit)
+                total, taskMapper.fetchUserTaskDetailList(selector, offset, limit)
         );
     }
 }

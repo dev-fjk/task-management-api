@@ -98,13 +98,14 @@ public class UserTaskListResponse {
     /**
      * レスポンスを作成する
      *
+     * @param offset     取得開始位置
      * @param resultList タスク一覧取得結果
      * @return {@link UserTaskListResponse}
      */
-    public static UserTaskListResponse of(TaskResultList resultList) {
+    public static UserTaskListResponse of(int offset, TaskResultList resultList) {
         return UserTaskListResponse.builder()
                 .total(resultList.getTotal())
-                .offset(resultList.getOffset())
+                .offset(offset)
                 .count(resultList.getCount())
                 .taskResultList(resultList.getTaskResultList().stream()
                         .map(UserTask::form).collect(Collectors.toList())

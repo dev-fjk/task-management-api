@@ -23,19 +23,19 @@ public interface TaskMapper {
     Optional<TaskDetail> fetchUserTaskDetail(@Param("userId") long userId, @Param("taskId") long taskId);
 
     /**
-     * ユーザーのタスクの総件数を取得する
+     * ユーザーのタスク一覧の件数を取得する
      *
-     * @param userId ユーザーID
+     * @param selector 検索条件
      * @return 取得件数
      */
-    int userTaskCount(@Param("userId") long userId);
+    int userTaskCount(@Param("selector") TaskListSelector selector);
 
     /**
      * ユーザーのタスクの一覧を取得する
      *
      * @param selector 検索条件
-     * @param offset 取得開始位置
-     * @param limit  取得件数
+     * @param offset   取得開始位置
+     * @param limit    取得件数
      * @return Task一覧
      */
     List<TaskDetail> fetchUserTaskDetailList(

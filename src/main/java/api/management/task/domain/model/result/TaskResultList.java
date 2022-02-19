@@ -19,11 +19,6 @@ public class TaskResultList {
     int total;
 
     /**
-     * 取得開始指定位置
-     */
-    int offset;
-
-    /**
      * タスク情報取得結果一覧
      */
     List<TaskResult> taskResultList;
@@ -45,10 +40,9 @@ public class TaskResultList {
      *
      * @return タスク情報が空の取得結果一覧
      */
-    public static TaskResultList empty(int offset) {
+    public static TaskResultList empty() {
         return TaskResultList.builder()
                 .total(0)
-                .offset(offset)
                 .taskResultList(Collections.emptyList())
                 .build();
     }

@@ -23,7 +23,7 @@ public class ResponseConverterImpl implements ResponseConverter {
      * {@inheritDoc}
      */
     @Override
-    public UserTaskListResponse convert(TaskResultList taskResultList) {
-        return UserTaskListResponse.of(taskResultList);
+    public UserTaskListResponse convert(int offset, TaskResultList taskResultList) {
+        return UserTaskListResponse.of(offset, taskResultList);
     }
 }

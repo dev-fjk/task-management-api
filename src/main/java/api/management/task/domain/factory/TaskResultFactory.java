@@ -22,9 +22,8 @@ public interface TaskResultFactory {
      * タスク一覧取得結果の返却
      *
      * @param total      取得総件数
-     * @param offset     取得開始位置
      * @param detailList DBのタスク詳細情報
      * @return {@link TaskResultList}
      */
-    TaskResultList factory(int total, int offset, List<TaskDetail> detailList);
+    TaskResultList factory(int total, List<TaskDetail> detailList);
 }

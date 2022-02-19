@@ -21,9 +21,10 @@ public interface ResponseConverter {
     /**
      * ユーザーのタスク情報一覧を返却する
      *
+     * @param offset         取得開始位置
      * @param taskResultList タスク取得結果一覧
      * @return {@link UserTaskListResponse}
      */
-    UserTaskListResponse convert(TaskResultList taskResultList);
+    UserTaskListResponse convert(int offset, TaskResultList taskResultList);
 
 }

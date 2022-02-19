@@ -2,21 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="api.management.task.infrastructure.mapper.TaskMapper">
 
-    <!-- Result Mapで変換設定を記載 -->
-    <resultMap type="api.management.task.infrastructure.entity.TaskDetail" id="TaskDetailMap">
-        <id property="taskId" column="task_id" jdbcType="BIGINT"/>
-        <result property="userId" column="user_id" jdbcType="BIGINT"/>
-        <result property="statusId" column="status_id" jdbcType="INTEGER"/>
-        <result property="priorityId" column="priority_id" jdbcType="INTEGER"/>
-        <result property="startDate" column="start_date" jdbcType="DATE"/>
-        <result property="endDate" column="end_date" jdbcType="DATE"/>
-        <result property="termDate" column="term_date" jdbcType="DATE"/>
-        <result property="status" column="status" jdbcType="VARCHAR"/>
-        <result property="priority" column="priority" jdbcType="VARCHAR"/>
-    </resultMap>
-
     <!-- ユーザーの単体のタスク詳細情報を取得 -->
     <select id="fetchUserTaskDetail" resultMap="TaskDetailMap">
+        <include refid="selectDetailBase"/>
+        WHERE
+        t.task_id = #{taskId} AND
+        t.user_id = #{userId} AND
+        t.is_deleted = '0'
+    </select>
+
+    <!-- ユーザーのタスク一覧を取得 -->
+    <select id="fetchUserTaskDetailList" resultMap="TaskDetailMap">
+        <include refid="selectDetailBase"/>
+        <include refid="selectTaskListFilter"/>
+        ORDER BY t.task_id
+        <include refid="offsetAndLimitTemplate"/>
+    </select>
+
+    <!-- ユーザーのタスク一覧の件数を取得 -->
+    <select id="userTaskCount" resultType="int">
+        SELECT
+          COUNT(task_id)
+        FROM
+            task t
+                INNER JOIN task_status_master s ON t.status_id = s.status_id
+                INNER JOIN task_priority_master p ON t.priority_id = p.priority_id
+        <include refid="selectTaskListFilter"/>
+    </select>
+
+    <!-- ユーザーのタスク詳細情報 取得時のテンプレート -->
+    <sql id="selectDetailBase">
         SELECT
             t.task_id,
             t.user_id,
@@ -29,17 +44,34 @@
             p.priority
         FROM
             task t
-                INNER JOIN
-                task_status_master s
-                ON t.status_id = s.status_id
-                INNER JOIN
-                task_priority_master p
-                ON t.priority_id = p.priority_id
+                INNER JOIN task_status_master s ON t.status_id = s.status_id
+                INNER JOIN task_priority_master p ON t.priority_id = p.priority_id
+    </sql>
+
+    <!-- ユーザーのタスク一覧情報取得時の 検索条件 -->
+    <sql id="selectTaskListFilter">
         WHERE
-            t.task_id = #{taskId}
-          AND
-            t.user_id = #{userId}
-          AND
-            t.is_deleted = '0'
-    </select>
+          t.user_id = #{selector.userId}
+        AND
+          t.is_deleted = '0'
+    </sql>
+
+    <!-- 取得開始位置と取得件数指定時のテンプレート -->
+    <sql id="offsetAndLimitTemplate">
+        LIMIT #{offset}, #{limit}
+    </sql>
+
+    <!-- Result Maps -->
+    <!-- TaskDetailの変換設定 -->
+    <resultMap type="api.management.task.infrastructure.entity.TaskDetail" id="TaskDetailMap">
+        <id property="taskId" column="task_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="statusId" column="status_id" jdbcType="INTEGER"/>
+        <result property="priorityId" column="priority_id" jdbcType="INTEGER"/>
+        <result property="startDate" column="start_date" jdbcType="DATE"/>
+        <result property="endDate" column="end_date" jdbcType="DATE"/>
+        <result property="termDate" column="term_date" jdbcType="DATE"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="priority" column="priority" jdbcType="VARCHAR"/>
+    </resultMap>
 </mapper>
