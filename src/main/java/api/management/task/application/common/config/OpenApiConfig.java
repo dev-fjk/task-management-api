@@ -98,7 +98,7 @@ public class OpenApiConfig {
         var badRequestContent = problemContent(objectMapper, ProblemResponse.builder()
                 .title("リクエストされたパラメータは正しくありません")
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail("questionは必須項目です")
+                .detail("userIdは必須項目です")
                 .build()
         );
         var unauthorizedContent = problemContent(objectMapper, ProblemResponse.builder()
