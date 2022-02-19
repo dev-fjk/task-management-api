@@ -1,6 +1,8 @@
 package api.management.task.infrastructure.mapper;
 
 import api.management.task.infrastructure.entity.TaskDetail;
+import java.util.List;
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +17,28 @@ public interface TaskMapper {
      *
      * @param userId ユーザーID
      * @param taskId タスクID
-     * @return {@link TaskDetail}
+     * @return タスク詳細情報
      */
-    TaskDetail fetchUserTaskDetail(@Param("userId") long userId, @Param("taskId") long taskId);
+    Optional<TaskDetail> fetchUserTaskDetail(@Param("userId") long userId, @Param("taskId") long taskId);
+
+    /**
+     * ユーザーのタスクの総件数を取得する
+     *
+     * @param userId ユーザーID
+     * @return 取得件数
+     */
+    int userTaskCount(@Param("userId") long userId);
+
+    /**
+     * ユーザーのタスクの一覧を取得する
+     *
+     * @param userId ユーザーID
+     * @param offset 取得開始位置
+     * @param limit  取得件数
+     * @return Task一覧
+     */
+    List<TaskDetail> fetchUserTaskList(
+            @Param("userId") long userId,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
 }
