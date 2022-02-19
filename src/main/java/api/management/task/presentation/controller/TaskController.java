@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * タスクテーブル コントローラークラス
+ */
 @Validated
 @RestController
 @RequestMapping(path = TaskController.BASE_PATH)
@@ -40,6 +43,13 @@ public class TaskController {
     private final ResponseConverter responseConverter;
     private final TaskListSelectorHelper taskListSelectorHelper;
 
+    /**
+     * ユーザーのタスク情報を取得する
+     *
+     * @param userId ユーザーID
+     * @param taskId タスクID
+     * @return ユーザーのタスク情報
+     */
     @GetMapping(path = "/users/{user-id}/tasks/{task-id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "ユーザーのタスクを取得")
@@ -63,6 +73,14 @@ public class TaskController {
         );
     }
 
+    /**
+     * ユーザーのタスク情報一覧を取得する
+     *
+     * @param userId ユーザーID
+     * @param offset 取得開始位置
+     * @param limit  取得件数
+     * @return ユーザーのタスク情報一覧
+     */
     @GetMapping(path = "/users/{user-id}/tasks")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "ユーザーのタスク一覧を取得")
@@ -82,7 +100,7 @@ public class TaskController {
             @PathVariable("user-id") @Min(1) long userId,
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") @Range(min = 1, max = 50) int limit) {
-        // GETのため 検索条件は全てバラバラの引数として受け取ってから helperで検索条件をマージしている
+        // GETのため 検索条件はクエリパラメータからバラバラの引数として受け取り helperで検索条件をマージしている
         // 後々 検索条件がかなり複雑になりそうであれば FacadeService経由で変換用のサービスを切ってもいいかもしれない(現状はユーザーIDだけ)
         final TaskListSelector selector = taskListSelectorHelper.selector(userId);
         return ResponseEntity.ok(responseConverter.convert(
