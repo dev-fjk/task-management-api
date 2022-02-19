@@ -1,20 +1,40 @@
+-- drop --
+DROP TABLE IF EXISTS `task`;
+DROP TABLE IF EXISTS `task_priority_master`;
+DROP TABLE IF EXISTS `task_status_master`;
+DROP TABLE IF EXISTS `task_user`;
+DROP TABLE IF EXISTS `auth_user`;
+
+-- create --
+-- ユーザー認証テーブル
+CREATE TABLE auth_user
+(
+    login_id   varchar(20) not null comment 'ログインID',
+    password   varchar(64) not null comment 'ハッシュ化済みパスワード',
+    created_at timestamp   not null default current_timestamp comment '作成日時',
+    created_by varchar(30) not null comment '作成者',
+    updated_at timestamp   not null default current_timestamp comment '更新日時',
+    updated_by varchar(30) not null comment '更新者',
+    PRIMARY KEY (login_id)
+);
+
+create index idx_auth_user_pass on auth_user (login_id, password);
+
 -- ユーザー情報テーブル
 CREATE TABLE task_user
 (
-    user_id      bigint       not null auto_increment comment 'ユーザーID',
-    last_name    varchar(30)  not null comment '苗字',
-    first_name   varchar(30)  not null comment '名前',
-    mail_address varchar(256) not null comment 'メールアドレス',
-    password     varchar(64)  not null comment 'sha256でハッシュ化されたパスワード',
-    created_at   timestamp    not null default current_timestamp comment '作成日時',
-    created_by   varchar(30)  not null comment '作成者',
-    updated_at   timestamp    not null default current_timestamp comment '更新日時',
-    updated_by   varchar(30)  not null comment '更新者',
-    PRIMARY KEY (user_id)
+    user_id    bigint      not null auto_increment comment 'ユーザーID',
+    login_id   varchar(20) not null unique comment 'ログインID',
+    name       varchar(30) not null comment 'ユーザー名',
+    created_at timestamp   not null default current_timestamp comment '作成日時',
+    created_by varchar(30) not null comment '作成者',
+    updated_at timestamp   not null default current_timestamp comment '更新日時',
+    updated_by varchar(30) not null comment '更新者',
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (login_id) REFERENCES auth_user (login_id)
 );
 
-create index idx_task_user_name on task_user (last_name, first_name);
-create index idx_task_user_auth on task_user (mail_address, password);
+create index idx_task_user_auth on task_user (login_id);
 
 -- ステータスマスタ
 CREATE TABLE task_status_master

@@ -1,6 +1,6 @@
-version: '2'
+version: '3.3'
 services:
-  dbserver:
+  db:
     build: mysql
     image: demo-db:0.0.1
     restart: always
@@ -9,6 +9,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: rootpassword
+      TZ: 'Asia/Tokyo'
     ports:
       - "3314:3306"
     volumes:
