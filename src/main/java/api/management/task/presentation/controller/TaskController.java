@@ -82,7 +82,8 @@ public class TaskController {
             @PathVariable("user-id") @Min(1) long userId,
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") @Range(min = 1, max = 50) int limit) {
-        // 検索条件がかなり複雑になりそうであれば FacadeServiceを作成しても良いかもしれない
+        // GETのため 検索条件は全てバラバラの引数として受け取ってから helperで検索条件をマージしている
+        // 後々 検索条件がかなり複雑になりそうであれば FacadeService経由で変換用のサービスを切ってもいいかもしれない(現状はユーザーIDだけ)
         final TaskListSelector selector = taskListSelectorHelper.selector(userId);
         return ResponseEntity.ok(responseConverter.convert(
                 taskService.fetchUserTaskList(selector, (offset - 1), limit)
