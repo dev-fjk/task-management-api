@@ -5,17 +5,15 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * タスクユーザーテーブルEntity
+ * 認証テーブル エンティティ
  */
 @Getter
 @ToString
-public class TaskUser {
-
-    private long userId;
+public class AuthUser {
 
     private String loginId;
 
-    private String name;
+    private String password;
 
     private LocalDateTime createdAt;
 
