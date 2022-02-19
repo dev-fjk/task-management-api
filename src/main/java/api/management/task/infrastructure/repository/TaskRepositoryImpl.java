@@ -4,6 +4,7 @@ import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.domain.factory.TaskResultFactory;
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
+import api.management.task.domain.model.selector.TaskListSelector;
 import api.management.task.domain.repository.TaskRepository;
 import api.management.task.infrastructure.entity.TaskDetail;
 import api.management.task.infrastructure.mapper.TaskMapper;
@@ -35,21 +36,16 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     /**
-     * ユーザーのタスク情報一覧を取得する
-     *
-     * @param userId ユーザーID
-     * @param offset 取得開始位置
-     * @param limit  　取得件数
-     * @return {@link TaskResultList}
+     * {@inheritDoc}
      */
     @Override
-    public TaskResultList fetchUserTaskList(long userId, int offset, int limit) {
-        final int total = taskMapper.userTaskCount(userId);
+    public TaskResultList fetchUserTaskList(TaskListSelector selector, int offset, int limit) {
+        final int total = taskMapper.userTaskCount(selector.getUserId());
         if (total == 0) {
             return TaskResultList.empty(offset);
         }
         return taskResultFactory.factory(
-                total, offset, taskMapper.fetchUserTaskDetailList(userId, offset, limit)
+                total, offset, taskMapper.fetchUserTaskDetailList(selector, offset, limit)
         );
     }
 }

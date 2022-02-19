@@ -1,5 +1,6 @@
 package api.management.task.infrastructure.mapper;
 
+import api.management.task.domain.model.selector.TaskListSelector;
 import api.management.task.infrastructure.entity.TaskDetail;
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +33,13 @@ public interface TaskMapper {
     /**
      * ユーザーのタスクの一覧を取得する
      *
-     * @param userId ユーザーID
+     * @param selector 検索条件
      * @param offset 取得開始位置
      * @param limit  取得件数
      * @return Task一覧
      */
     List<TaskDetail> fetchUserTaskDetailList(
-            @Param("userId") long userId,
+            @Param("selector") TaskListSelector selector,
             @Param("offset") int offset,
             @Param("limit") int limit);
 }

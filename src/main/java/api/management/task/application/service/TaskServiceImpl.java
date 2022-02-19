@@ -2,6 +2,7 @@ package api.management.task.application.service;
 
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
+import api.management.task.domain.model.selector.TaskListSelector;
 import api.management.task.domain.repository.TaskRepository;
 import api.management.task.domain.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
      * {@inheritDoc}
      */
     @Override
-    public TaskResultList fetchUserTaskList(long userId, int offset, int limit) {
-        return taskRepository.fetchUserTaskList(userId, offset, limit);
+    public TaskResultList fetchUserTaskList(TaskListSelector selector, int offset, int limit) {
+        return taskRepository.fetchUserTaskList(selector, offset, limit);
     }
 }

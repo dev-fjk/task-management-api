@@ -1,8 +1,10 @@
 package api.management.task.presentation.controller;
 
 import api.management.task.application.common.constant.OpenApiConstant;
+import api.management.task.domain.model.selector.TaskListSelector;
 import api.management.task.domain.service.TaskService;
 import api.management.task.presentation.converter.ResponseConverter;
+import api.management.task.presentation.helper.TaskListSelectorHelper;
 import api.management.task.presentation.model.response.UserTaskListResponse;
 import api.management.task.presentation.model.response.UserTaskResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +38,7 @@ public class TaskController {
 
     private final TaskService taskService;
     private final ResponseConverter responseConverter;
+    private final TaskListSelectorHelper taskListSelectorHelper;
 
     @GetMapping(path = "/users/{user-id}/tasks/{task-id}")
     @ResponseStatus(HttpStatus.OK)
@@ -79,8 +82,10 @@ public class TaskController {
             @PathVariable("user-id") @Min(1) long userId,
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") @Range(min = 1, max = 50) int limit) {
+        // 検索条件がかなり複雑になりそうであれば FacadeServiceを作成しても良いかもしれない
+        final TaskListSelector selector = taskListSelectorHelper.selector(userId);
         return ResponseEntity.ok(responseConverter.convert(
-                taskService.fetchUserTaskList(userId, (offset - 1), limit)
+                taskService.fetchUserTaskList(selector, (offset - 1), limit)
         ));
     }
 }
