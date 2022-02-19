@@ -1,23 +1,47 @@
 package api.management.task.application.factory;
 
 import api.management.task.application.common.utility.DateConverterUtil;
+import api.management.task.domain.factory.TaskResultFactory;
 import api.management.task.domain.model.result.TaskResult;
+import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.infrastructure.entity.TaskDetail;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
  * タスクの取得結果作成用のファクトリ
  */
 @Component
-public class TaskResultFactory {
+public class TaskResultFactoryImpl implements TaskResultFactory {
 
     /**
-     * タスクの詳細情報取得結果を作成
-     *
-     * @param detail DBのタスク詳細情報
-     * @return {@link TaskResult}
+     * {@inheritDoc}
      */
+    @Override
     public TaskResult factory(TaskDetail detail) {
+        return this.mapToResult(detail);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TaskResultList factory(int total, List<TaskDetail> detailList) {
+        return TaskResultList.builder()
+                .total(total)
+                .taskResultList(detailList.stream()
+                        .map(this::mapToResult).collect(Collectors.toList())
+                ).build();
+    }
+
+    /**
+     * TaskDetailからTaskResultを生成する
+     *
+     * @param detail タスク詳細情報
+     * @return タスク取得結果クラス
+     */
+    private TaskResult mapToResult(TaskDetail detail) {
         return TaskResult.builder()
                 .taskId(detail.getTaskId())
                 .userId(detail.getUserId())
