@@ -7,20 +7,83 @@ servers:
   - url: http://localhost:8080
     description: Generated server url
 tags:
-  - name: mock/v1/
-    description: 動作チェック用コントローラ
+  - name: /task/v1/
+    description: タスクテーブルの操作用コントローラー
 paths:
-  /mock/v1/hello:
+  /task/v1/users/{user-id}/tasks:
     get:
       tags:
-        - mock/v1/
-      summary: 動作確認要エンドポイント
-      operationId: get
+        - /task/v1/
+      summary: ユーザーのタスク一覧を取得
+      operationId: fetchUserTaskList
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          required: false
+          schema:
+            minimum: 1
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
       responses:
+        "500":
+          $ref: '#/components/responses/internalServerError'
+        "400":
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
         "200":
-          description: Hello world
+          description: ユーザーのタスク情報一覧
           content:
-            text/plain: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTaskListResponse'
+        "403":
+          $ref: '#/components/responses/forbidden'
+  /task/v1/users/{user-id}/tasks/{task-id}:
+    get:
+      tags:
+        - /task/v1/
+      summary: ユーザーのタスクを取得
+      operationId: fetchUserTask
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+      responses:
+        "404":
+          $ref: '#/components/responses/taskNotFound'
+        "200":
+          description: ユーザーのタスク情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTaskResponse'
         "500":
           $ref: '#/components/responses/internalServerError'
         "400":
@@ -31,6 +94,142 @@ paths:
           $ref: '#/components/responses/forbidden'
 components:
   schemas:
+    TaskPriority:
+      type: string
+      description: "タスクの優先度一覧: \n* `11` - LOW(低)\n* `12` - MIDDLE(中)\n* `13` - HIGH(高\
+        )\n"
+      example: LOW
+      enum:
+        - LOW
+        - MIDDLE
+        - HIGH
+    TaskStatus:
+      type: string
+      description: "タスクのステータス一覧: \n* `1` - TODO(着手前)\n* `2` - PROGRESS(進行中)\n* `3`\
+        \ - WAIT(停止中)\n* `4` - RESOLVED(解決済み)\n"
+      example: TODO
+      enum:
+        - TODO
+        - PROGRESS
+        - WAIT
+        - RESOLVED
+    UserTaskListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 総件数
+          format: int32
+          example: 100
+        offset:
+          type: integer
+          description: 取得開始位置
+          format: int32
+          example: 1
+        count:
+          type: integer
+          description: 取得件数
+          format: int32
+          example: 20
+        ユーザーのタスク一覧:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserTaskListResponse.UserTask'
+      description: ユーザーのタスク一覧情報
+    UserTaskListResponse.UserTask:
+      required:
+        - priority
+        - priorityId
+        - status
+        - statusId
+        - taskId
+        - userId
+      type: object
+      properties:
+        taskId:
+          type: integer
+          description: タスクID
+          format: int64
+          example: 10
+        userId:
+          type: integer
+          description: ユーザーID
+          format: int64
+          example: 100
+        statusId:
+          type: integer
+          description: ステータスID
+          format: int32
+          example: 1
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        priorityId:
+          type: integer
+          description: 優先度ID
+          format: int32
+          example: 11
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        startDate:
+          type: string
+          description: 開始日
+          example: 2022-02-15
+        endDate:
+          type: string
+          description: 終了日
+          example: 2022-02-22
+        termDate:
+          type: string
+          description: 期限日
+          example: 2022-02-25
+      description: ユーザーのタスク
+    UserTaskResponse:
+      required:
+        - priority
+        - priorityId
+        - status
+        - statusId
+        - taskId
+        - userId
+      type: object
+      properties:
+        taskId:
+          type: integer
+          description: タスクID
+          format: int64
+          example: 10
+        userId:
+          type: integer
+          description: ユーザーID
+          format: int64
+          example: 100
+        statusId:
+          type: integer
+          description: ステータスID
+          format: int32
+          example: 1
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        priorityId:
+          type: integer
+          description: 優先度ID
+          format: int32
+          example: 11
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        startDate:
+          type: string
+          description: 開始日
+          example: 2022-02-15
+        endDate:
+          type: string
+          description: 終了日
+          example: 2022-02-22
+        termDate:
+          type: string
+          description: 期限日
+          example: 2022-02-25
+      description: ユーザーのタスク情報
     ProblemResponse:
       type: object
       properties:
@@ -73,6 +272,14 @@ components:
             $ref: '#/components/schemas/ProblemResponse'
           example: "{\"title\":\"アクセスが拒否されました\",\"status\":403,\"detail\":\"アクセスする\
             権限がありません\"}"
+    taskNotFound:
+      description: タスクが見つからない
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+          example: "{\"title\":\"リクエストされたリソースは見つかりませんでした\",\"status\":404,\"detail\"\
+            :\"タスク情報が見つかりませんでした\"}"
     internalServerError:
       description: 処理が正常に終了しなかった
       content:
