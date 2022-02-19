@@ -6,9 +6,9 @@
     <select id="fetchUserTaskDetail" resultMap="TaskDetailMap">
         <include refid="selectDetailBase"/>
         WHERE
-        t.task_id = #{taskId} AND
-        t.user_id = #{userId} AND
-        t.is_deleted = '0'
+          t.task_id = #{taskId} AND
+          t.user_id = #{userId} AND
+          t.is_deleted = '0'
     </select>
 
     <!-- ユーザーのタスク一覧を取得 -->
@@ -51,8 +51,7 @@
     <!-- ユーザーのタスク一覧情報取得時の 検索条件 -->
     <sql id="selectTaskListFilter">
         WHERE
-          t.user_id = #{selector.userId}
-        AND
+          t.user_id = #{selector.userId} AND
           t.is_deleted = '0'
     </sql>
 
