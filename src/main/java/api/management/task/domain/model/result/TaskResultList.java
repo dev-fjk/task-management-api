@@ -1,5 +1,6 @@
 package api.management.task.domain.model.result;
 
+import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
@@ -37,5 +38,18 @@ public class TaskResultList {
             return 0;
         }
         return taskResultList.size();
+    }
+
+    /**
+     * 空のタスク情報一覧返却
+     *
+     * @return タスク情報が空の取得結果一覧
+     */
+    public static TaskResultList empty(int offset) {
+        return TaskResultList.builder()
+                .total(0)
+                .offset(offset)
+                .taskResultList(Collections.emptyList())
+                .build();
     }
 }

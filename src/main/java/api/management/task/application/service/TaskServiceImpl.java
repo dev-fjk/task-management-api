@@ -31,6 +31,6 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskResultList fetchUserTaskList(long userId, int offset, int limit) {
-        return null;
+        return taskRepository.fetchUserTaskList(userId, offset, limit);
     }
 }

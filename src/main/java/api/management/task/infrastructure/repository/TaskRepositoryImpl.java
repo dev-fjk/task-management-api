@@ -8,12 +8,14 @@ import api.management.task.domain.repository.TaskRepository;
 import api.management.task.infrastructure.entity.TaskDetail;
 import api.management.task.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 /**
  * タスクテーブル操作用リポジトリ
  */
-@Service
+@Slf4j
+@Repository
 @RequiredArgsConstructor
 public class TaskRepositoryImpl implements TaskRepository {
 
@@ -26,6 +28,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public TaskResult fetchUserTask(long userId, long taskId) {
         final TaskDetail taskDetail = taskMapper.fetchUserTaskDetail(userId, taskId).orElseThrow(() -> {
+            log.error("user task not found userId: {}, taskId: {}", userId, taskId);
             throw new ResourceNotFoundException("ユーザーのタスク情報が見つかりませんでした");
         });
         return taskResultFactory.factory(taskDetail);
@@ -41,6 +44,12 @@ public class TaskRepositoryImpl implements TaskRepository {
      */
     @Override
     public TaskResultList fetchUserTaskList(long userId, int offset, int limit) {
-        return null;
+        final int total = taskMapper.userTaskCount(userId);
+        if (total == 0) {
+            return TaskResultList.empty(offset);
+        }
+        return taskResultFactory.factory(
+                total, offset, taskMapper.fetchUserTaskDetailList(userId, offset, limit)
+        );
     }
 }

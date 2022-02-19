@@ -37,7 +37,7 @@ public interface TaskMapper {
      * @param limit  取得件数
      * @return Task一覧
      */
-    List<TaskDetail> fetchUserTaskList(
+    List<TaskDetail> fetchUserTaskDetailList(
             @Param("userId") long userId,
             @Param("offset") int offset,
             @Param("limit") int limit);

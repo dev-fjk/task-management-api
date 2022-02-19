@@ -2,32 +2,31 @@ package api.management.task.domain.model.result;
 
 import api.management.task.domain.model.consts.TaskPriority;
 import api.management.task.domain.model.consts.TaskStatus;
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
 
 /**
  * タスクの取得結果保持クラス
  */
-@Data
+@Value
 @Builder
 public class TaskResult {
 
-    private long taskId;
+    long taskId;
 
-    private long userId;
+    long userId;
 
-    private int statusId;
+    int statusId;
 
-    private TaskStatus status;
+    TaskStatus status;
 
-    private int priorityId;
+    int priorityId;
 
-    private TaskPriority priority;
+    TaskPriority priority;
 
-    private String startDate;
+    String startDate;
 
-    private String endDate;
+    String endDate;
 
-    private String termDate;
+    String termDate;
 }
