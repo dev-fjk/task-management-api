@@ -1,13 +1,21 @@
+-- 認証テーブル
+INSERT INTO
+    auth_user(login_id, password, created_by, updated_by)
+VALUES
+    ('userId1', 'password', 'testUser', 'test_user');
+INSERT INTO
+    auth_user(login_id, password, created_by, updated_by)
+VALUES
+    ('userId2', 'password', 'testUser', 'test_user');
 -- ユーザー
 INSERT INTO
-    task_user(last_name, first_name, mail_address, password, created_by, updated_by)
+    task_user(login_id, name, created_by, updated_by)
 VALUES
-    ('Tanaka', 'Tarou', 'aaa@gmail.com', 'password', 'testUser', 'test_user');
+    ('userId1', 'dev-fjk', 'testUser', 'test_user');
 INSERT INTO
-    task_user(last_name, first_name, mail_address, password, created_by, updated_by)
+    task_user(login_id, name, created_by, updated_by)
 VALUES
-    ('Satou', 'Kazuya', 'bbb@gmail.com', 'password2', 'testUser', 'test_user');
-
+    ('userId2', '田中', 'testUser', 'test_user');
 -- ステータス マスタ
 INSERT INTO
     task_status_master(status_id, status, created_by, updated_by)

@@ -37,11 +37,11 @@ $ docker-compose up -d --build
 
 ### DB初期化手順
 
-- 以下に配置されているDDLを直接MySQLに突っ込む
-    - windows環境で初期化用のシェル組むの大変そうなので辞めた
+- MySQLに直接DDLとDMLを投入する
 
 ~~~
-docker/initdb.d/1_schema.sql
+(1) docker/initdb.d/1_schema.sql を直接MySQLに投入する
+(2) docker/initdb.d/1_schema.sql
 ~~~
 
 ## UTについて
