@@ -26,5 +26,4 @@ public interface TaskService {
      * @return {@link TaskResultList}
      */
     TaskResultList fetchUserTaskList(long userId, int offset, int limit);
-
 }

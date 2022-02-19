@@ -40,7 +40,7 @@ public class TaskRepositoryImpl implements TaskRepository {
      * @param userId ユーザーID
      * @param offset 取得開始位置
      * @param limit  　取得件数
-     * @return {@link TaskResultList}d
+     * @return {@link TaskResultList}
      */
     @Override
     public TaskResultList fetchUserTaskList(long userId, int offset, int limit) {
