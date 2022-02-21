@@ -41,5 +41,6 @@ public interface TaskMapper {
     List<TaskDetail> fetchUserTaskDetailList(
             @Param("selector") TaskListSelector selector,
             @Param("offset") int offset,
-            @Param("limit") int limit);
+            @Param("limit") int limit
+    );
 }

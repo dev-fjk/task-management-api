@@ -9,6 +9,9 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+/**
+ * タスクに対する更新を行うリクエストのベースクラス
+ */
 @Data
 public abstract class TaskBaseRequest {
 
@@ -32,11 +35,21 @@ public abstract class TaskBaseRequest {
     @Schema(description = "期限日", example = "2022-02-25")
     private LocalDate termDate;
 
+    /**
+     * TaskStatusの有効値チェックを行う
+     *
+     * @return falseの場合バリデーションエラーとする
+     */
     @AssertTrue(message = "{validation.status-enabled}")
     private boolean isEnableStatusId() {
         return TaskStatus.getIdList().contains(this.statusId);
     }
 
+    /**
+     * TaskPriorityの有効値チェックを行う
+     *
+     * @return falseの場合バリデーションエラーとする
+     */
     @AssertTrue(message = "{validation.priority-enabled}")
     private boolean isEnableTaskPriority() {
         return TaskPriority.getIdList().contains(this.priorityId);
