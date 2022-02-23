@@ -62,7 +62,7 @@ public class OpenApiConfig {
         headers.put(OpenApiConstant.TASK_INSERT_HEADER_EXAMPLE_KEY,
                 HeaderInfo.builder().example("task/v1/users/10/tasks/100")
                         .description("登録したタスクを取得するURI情報")
-                        .type(MediaType.TEXT_PLAIN_VALUE).build()
+                        .type("string").build()
         );
 
         return headers.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
