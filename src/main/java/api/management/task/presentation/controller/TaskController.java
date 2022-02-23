@@ -120,7 +120,7 @@ public class TaskController {
      * タスクを追加する
      *
      * @param userId ユーザーID
-     * @return 追加成功時は自動採番されたタスクIDを返却
+     * @return Locationヘッダー に追加したタスクを取得するURIを設定し返却
      */
     @PostMapping(path = "/users/{user-id}/tasks")
     @ResponseStatus(HttpStatus.CREATED)
