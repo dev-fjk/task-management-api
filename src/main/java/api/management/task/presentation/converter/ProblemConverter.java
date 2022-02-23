@@ -97,7 +97,6 @@ public class ProblemConverter {
      * @return {@link ProblemResponse}
      */
     public ProblemResponse convert(RuntimeException exception) {
-        exception.printStackTrace();
         return ProblemResponse.builder()
                 .title("予期しないエラーが発生しました")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
