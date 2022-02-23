@@ -25,7 +25,7 @@ public interface TaskRepository {
      *
      * @param selector 検索条件
      * @param offset   取得開始位置
-     * @param limit    　取得件数
+     * @param limit    取得件数
      * @return {@link TaskResultList}
      */
     TaskResultList fetchUserTaskList(TaskListSelector selector, int offset, int limit);
