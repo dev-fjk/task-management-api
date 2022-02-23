@@ -31,7 +31,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public TaskResult fetchUserTask(long userId, long taskId) {
         final TaskDetail taskDetail = taskMapper.fetchUserTaskDetail(userId, taskId).orElseThrow(() -> {
-            log.error("user task not found userId: {}, taskId: {}", userId, taskId);
+            log.error("ユーザーのタスク情報が見つかりませんでした userId: {}, taskId: {}", userId, taskId);
             throw new ResourceNotFoundException("ユーザーのタスク情報が見つかりませんでした");
         });
         return taskResultFactory.factory(taskDetail);
@@ -47,9 +47,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         if (total == 0) {
             return TaskResultList.empty();
         }
-        return taskResultFactory.factory(
-                total, taskMapper.fetchUserTaskDetailList(selector, offset, limit)
-        );
+        return taskResultFactory.factory(total, taskMapper.fetchUserTaskDetailList(selector, offset, limit));
     }
 
     /**
