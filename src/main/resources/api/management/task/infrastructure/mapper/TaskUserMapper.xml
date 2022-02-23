@@ -2,13 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="api.management.task.infrastructure.mapper.TaskUserMapper">
 
-    <!-- ユーザーの単体のタスク詳細情報を取得 -->
+    <!-- ユーザー情報を取得 -->
     <select id="fetchUser" resultMap="TaskUserMap">
         <include refid="selectTaskUserBase"/>
         WHERE
         u.user_id = #{userId}
     </select>
 
+    <!-- タスクユーザーテーブルへのselectテンプレート -->
     <sql id="selectTaskUserBase">
         SELECT
             u.user_id,
