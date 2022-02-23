@@ -5,9 +5,15 @@ import api.management.task.presentation.model.response.ProblemResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.Builder;
+import lombok.Data;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +36,7 @@ public class OpenApiConfig {
     public OpenApiCustomiser openApiCustomiser(ObjectMapper objectMapper) {
         return openApi -> {
             addSchemas(openApi.getComponents());
-            addResponses(openApi.getComponents(), objectMapper);
+            addResponses(openApi.getComponents(), addHeaders(), objectMapper);
         };
     }
 
@@ -45,17 +51,54 @@ public class OpenApiConfig {
     }
 
     /**
+     * ヘッダー定義
+     *
+     * @return ヘッダー取得用のキー値とヘッダーの組み合わせ
+     */
+    private Map<String, Header> addHeaders() {
+
+        // ヘッダー情報一覧を定義
+        Map<String, HeaderInfo> headers = new HashMap<>();
+        headers.put(OpenApiConstant.TASK_INSERT_HEADER_EXAMPLE_KEY,
+                HeaderInfo.builder().example("task/v1/users/10/tasks/100")
+                        .description("登録したタスクを取得するURI情報")
+                        .type("string").build()
+        );
+
+        return headers.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+            Header header = new Header();
+            header.description(e.getValue().getDescription());
+            header.setSchema(this.headerSchema(e.getValue()));
+            return header;
+        }));
+    }
+
+    /**
+     * ヘッダーに設定するスキーマの作成
+     *
+     * @param headerInfo ヘッダー情報
+     * @return ヘッダーに設定するスキーマ
+     */
+    private Schema<?> headerSchema(HeaderInfo headerInfo) {
+        Schema<?> schema = new Schema<>();
+        schema.setType(headerInfo.getType());
+        schema.setExample(headerInfo.getExample());
+        schema.description(headerInfo.getDescription());
+        return schema;
+    }
+
+    /**
      * レスポンス定義を追加する
      *
      * @param components   : コンポーネント
      * @param objectMapper : ObjectMapper
      */
-    private void addResponses(Components components, ObjectMapper objectMapper) {
+    private void addResponses(Components components, Map<String, Header> headers, ObjectMapper objectMapper) {
 
         var badRequestContent = problemContent(objectMapper, ProblemResponse.builder()
                 .title("リクエストされたパラメータは正しくありません")
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail("questionは必須項目です")
+                .detail("userIdは必須項目です")
                 .build()
         );
         var unauthorizedContent = problemContent(objectMapper, ProblemResponse.builder()
@@ -76,6 +119,12 @@ public class OpenApiConfig {
                 .detail("タスク情報が見つかりませんでした")
                 .build()
         );
+        var userNotFound = problemContent(objectMapper, ProblemResponse.builder()
+                .title("リクエストされたリソースは見つかりませんでした")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail("ユーザーが見つかりませんでした ユーザーID: " + 10)
+                .build()
+        );
         var internalServerErrorContent = problemContent(objectMapper, ProblemResponse.builder()
                 .title("リクエストされた操作を完了できませんでした")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -91,6 +140,15 @@ public class OpenApiConfig {
                         .description("許可されていないアクセス").content(forbiddenContent))
                 .addResponses(OpenApiConstant.TASK_NOT_FOUND, new ApiResponse()
                         .description("タスクが見つからない").content(taskNotFound))
+                .addResponses(OpenApiConstant.USER_NOT_FOUND, new ApiResponse()
+                        .description("ユーザーが見つからない").content(userNotFound))
+                .addResponses(OpenApiConstant.TASK_INSERTED_SUCCESS, new ApiResponse()
+                        .description("タスクが正常に追加できた")
+                        .headers(Map.of("location", headers.get(OpenApiConstant.TASK_INSERT_HEADER_EXAMPLE_KEY)))
+                ).addResponses(OpenApiConstant.TASK_UPDATED_SUCCESS, new ApiResponse()
+                        .description("正常に更新できた"))
+                .addResponses(OpenApiConstant.TASK_DELETED_SUCCESS, new ApiResponse()
+                        .description("正常に削除できた"))
                 .addResponses(OpenApiConstant.INTERNAL_SERVER_ERROR, new ApiResponse()
                         .description("処理が正常に終了しなかった").content(internalServerErrorContent));
     }
@@ -111,5 +169,16 @@ public class OpenApiConfig {
         } catch (Exception exception) {
             throw new IllegalStateException("Swaggerのコンテンツ作成に失敗しました", exception);
         }
+    }
+
+    /**
+     * ヘッダー情報の保持用
+     */
+    @Data
+    @Builder
+    public static class HeaderInfo {
+        private String example;
+        private String description;
+        private String type;
     }
 }

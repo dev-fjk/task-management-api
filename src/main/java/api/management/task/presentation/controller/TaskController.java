@@ -1,10 +1,12 @@
 package api.management.task.presentation.controller;
 
 import api.management.task.application.common.constant.OpenApiConstant;
-import api.management.task.domain.model.selector.TaskListSelector;
+import api.management.task.domain.model.task.TaskListSelector;
+import api.management.task.domain.model.task.TaskRegister;
 import api.management.task.domain.service.TaskService;
 import api.management.task.presentation.converter.ResponseConverter;
 import api.management.task.presentation.helper.TaskListSelectorHelper;
+import api.management.task.presentation.model.request.TaskAddRequest;
 import api.management.task.presentation.model.response.UserTaskListResponse;
 import api.management.task.presentation.model.response.UserTaskResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
 import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -22,10 +25,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * タスクテーブル コントローラークラス
@@ -38,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TaskController {
 
     public static final String BASE_PATH = "/task/v1/";
+    public static final String TASK_LOCATION_URI = "task/v1/users/{user-id}/tasks/{task-id}";
 
     private final TaskService taskService;
     private final ResponseConverter responseConverter;
@@ -63,7 +70,7 @@ public class TaskController {
             @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
             @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
             @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
-            @ApiResponse(responseCode = "404", ref = OpenApiConstant.TASK_NOT_FOUND),
+            @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
     public ResponseEntity<?> fetchUserTask(@PathVariable("user-id") @Min(1) long userId,
@@ -107,5 +114,46 @@ public class TaskController {
                 // DBへの検索用にServiceには取得開始位置を -1 して渡す
                 responseConverter.convert(offset, taskService.fetchUserTaskList(selector, (offset - 1), limit))
         );
+    }
+
+    /**
+     * タスクを追加する
+     *
+     * @param userId ユーザーID
+     * @return 追加成功時は自動採番されたタスクIDを返却
+     */
+    @PostMapping(path = "/users/{user-id}/tasks")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "クイズの追加を行う")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(schema = @Schema(implementation = TaskAddRequest.class))
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", ref = OpenApiConstant.TASK_INSERTED_SUCCESS),
+            @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
+            @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
+            @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
+            @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
+            @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
+    })
+    public ResponseEntity<?> register(@PathVariable("user-id") @Min(1) long userId,
+                                      @Validated @RequestBody TaskAddRequest addRequest) {
+        // タスクを登録し、登録したタスクの取得に使用するURIをLocationヘッダーに詰めて返却する
+        return ResponseEntity.created(
+                this.taskLocationUri(userId, taskService.register(TaskRegister.of(userId, addRequest)))
+        ).build();
+    }
+
+    /**
+     * 登録したタスクのLocationURIを返却する
+     *
+     * @param userId ユーザーID
+     * @param taskId 更新した タスクID
+     * @return LocationURI
+     */
+    private URI taskLocationUri(long userId, long taskId) {
+        return UriComponentsBuilder.newInstance().path(TASK_LOCATION_URI)
+                .buildAndExpand(userId, taskId)
+                .toUri();
     }
 }

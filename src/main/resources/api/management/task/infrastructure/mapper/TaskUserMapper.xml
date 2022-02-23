@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.management.task.infrastructure.mapper.TaskUserMapper">
+
+    <!-- ユーザー情報を取得 -->
+    <select id="fetchUser" resultMap="TaskUserMap">
+        <include refid="selectTaskUserBase"/>
+        WHERE
+        u.user_id = #{userId}
+    </select>
+
+    <!-- タスクユーザーテーブルへのselectテンプレート -->
+    <sql id="selectTaskUserBase">
+        SELECT
+            u.user_id,
+            u.login_id,
+            u.name
+        FROM
+            task_user u
+    </sql>
+
+    <!-- Result Maps -->
+    <!-- TaskUserの変換設定 -->
+    <resultMap type="api.management.task.infrastructure.entity.TaskUser" id="TaskUserMap">
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="loginId" column="login_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

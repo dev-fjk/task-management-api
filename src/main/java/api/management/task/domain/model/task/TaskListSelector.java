@@ -1,4 +1,4 @@
-package api.management.task.domain.model.selector;
+package api.management.task.domain.model.task;
 
 import lombok.Builder;
 import lombok.Data;

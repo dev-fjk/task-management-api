@@ -54,6 +54,38 @@ paths:
                 $ref: '#/components/schemas/UserTaskListResponse'
         "403":
           $ref: '#/components/responses/forbidden'
+    post:
+      tags:
+        - /task/v1/
+      summary: クイズの追加を行う
+      operationId: register
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskAddRequest'
+        required: true
+      responses:
+        "500":
+          $ref: '#/components/responses/internalServerError'
+        "201":
+          $ref: '#/components/responses/taskInsertedSuccessfully'
+        "400":
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+        "404":
+          $ref: '#/components/responses/userNotFound'
+        "403":
+          $ref: '#/components/responses/forbidden'
   /task/v1/users/{user-id}/tasks/{task-id}:
     get:
       tags:
@@ -76,24 +108,56 @@ paths:
             type: integer
             format: int64
       responses:
-        "404":
-          $ref: '#/components/responses/taskNotFound'
+        "500":
+          $ref: '#/components/responses/internalServerError'
+        "400":
+          $ref: '#/components/responses/badRequest'
         "200":
           description: ユーザーのタスク情報
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserTaskResponse'
-        "500":
-          $ref: '#/components/responses/internalServerError'
-        "400":
-          $ref: '#/components/responses/badRequest'
         "401":
           $ref: '#/components/responses/unauthorized'
+        "404":
+          $ref: '#/components/responses/userNotFound'
         "403":
           $ref: '#/components/responses/forbidden'
 components:
   schemas:
+    TaskAddRequest:
+      required:
+        - priorityId
+        - statusId
+      type: object
+      properties:
+        statusId:
+          type: integer
+          description: ステータスID
+          format: int32
+          example: 1
+        priorityId:
+          type: integer
+          description: 優先度ID
+          format: int32
+          example: 11
+        startDate:
+          type: string
+          description: 開始日
+          format: date
+          example: 2022-02-15
+        endDate:
+          type: string
+          description: 終了日
+          format: date
+          example: 2022-02-22
+        termDate:
+          type: string
+          description: 期限日
+          format: date
+          example: 2022-02-25
+      description: タスク追加リクエスト
     TaskPriority:
       type: string
       description: "タスクの優先度一覧: \n* `11` - LOW(低)\n* `12` - MIDDLE(中)\n* `13` - HIGH(高\
@@ -255,7 +319,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemResponse'
           example: "{\"title\":\"リクエストされたパラメータは正しくありません\",\"status\":400,\"detail\"\
-            :\"questionは必須項目です\"}"
+            :\"userIdは必須項目です\"}"
     unauthorized:
       description: 認証情報がリクエストに付与されていない
       content:
@@ -280,6 +344,27 @@ components:
             $ref: '#/components/schemas/ProblemResponse'
           example: "{\"title\":\"リクエストされたリソースは見つかりませんでした\",\"status\":404,\"detail\"\
             :\"タスク情報が見つかりませんでした\"}"
+    userNotFound:
+      description: ユーザーが見つからない
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+          example: "{\"title\":\"リクエストされたリソースは見つかりませんでした\",\"status\":404,\"detail\"\
+            :\"ユーザーが見つかりませんでした ユーザーID: 10\"}"
+    taskInsertedSuccessfully:
+      description: タスクが正常に追加できた
+      headers:
+        location:
+          description: 登録したタスクを取得するURI情報
+          schema:
+            type: string
+            description: 登録したタスクを取得するURI情報
+            example: task/v1/users/10/tasks/100
+    taskUpdatedSuccessfully:
+      description: 正常に更新できた
+    taskDeletedSuccessfully:
+      description: 正常に削除できた
     internalServerError:
       description: 処理が正常に終了しなかった
       content:

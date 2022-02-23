@@ -1,6 +1,9 @@
 package api.management.task.domain.model.consts;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 
 /**
@@ -22,5 +25,16 @@ public enum TaskPriority {
 
     TaskPriority(int id) {
         this.id = id;
+    }
+
+    /**
+     * ID一覧を返す
+     *
+     * @return ID一覧
+     */
+    public static List<Integer> getIdList() {
+        return Arrays.stream(TaskPriority.values())
+                .map(TaskPriority::getId)
+                .collect(Collectors.toList());
     }
 }

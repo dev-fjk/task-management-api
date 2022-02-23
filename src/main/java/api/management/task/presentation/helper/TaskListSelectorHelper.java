@@ -1,6 +1,6 @@
 package api.management.task.presentation.helper;
 
-import api.management.task.domain.model.selector.TaskListSelector;
+import api.management.task.domain.model.task.TaskListSelector;
 
 /**
  * コントローラーの引数からタスク一覧取得情報保持用のBeanへ変換するHelper
