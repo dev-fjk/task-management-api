@@ -19,7 +19,8 @@ public interface TaskMapper {
 
     String TASK_INSERT_TEMPLATE = "INSERT INTO task(user_id, status_id, priority_id," +
             " start_date, end_date, term_date, created_by, updated_by) ";
-    String TASK_DELETE_TEMPLATE = "delete from task ";
+
+    String TASK_DELETE_TEMPLATE = "DELETE FROM task ";
 
     /**
      * Userのタスク詳細情報を取得する
