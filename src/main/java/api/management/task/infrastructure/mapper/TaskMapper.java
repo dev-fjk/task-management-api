@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * タスクテーブル向けのMapper IF
@@ -63,6 +64,19 @@ public interface TaskMapper {
             + " #{task.endDate}, #{task.termDate}, #{task.createdBy}, #{task.updatedBy})")
     @Options(useGeneratedKeys = true, keyProperty = "task.taskId", keyColumn = "task_id")
     int register(@Param("task") Task task);
+
+    /**
+     * タスクを更新する
+     *
+     * @param task      更新するタスク情報
+     * @param updatedAt 更新日時情報
+     * @return 更新件数
+     */
+    @Update("UPDATE task SET status_id = #{task.statusId}, priority_id = #{task.priorityId}," +
+            " start_date = #{task.startDate}, end_date = #{task.endDate}, term_date = #{task.termDate}," +
+            " updated_at = #{updatedAt}, updated_by = #{task.updatedBy}" +
+            " WHERE task_id = #{task.taskId} AND user_id = #{task.userId}")
+    int updateTask(@Param("task") Task task, @Param("updatedAt") String updatedAt);
 
     /**
      * ユーザーのタスクを削除する

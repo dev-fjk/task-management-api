@@ -1,6 +1,8 @@
 package api.management.task.infrastructure.entity;
 
 import api.management.task.domain.model.task.TaskRegister;
+import api.management.task.domain.model.task.TaskUpdater;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -37,10 +39,6 @@ public class Task {
 
     private LocalDateTime deletedAt;
 
-    private String deletedBy;
-
-    private boolean isDeleted;
-
     /**
      * 追加に使用するtaskを生成
      *
@@ -57,6 +55,25 @@ public class Task {
         task.termDate = register.getTermDate();
         task.createdBy = String.valueOf(register.getUserId());
         task.updatedBy = String.valueOf(register.getUserId());
+        return task;
+    }
+
+    /**
+     * 更新に使用するtaskを生成
+     *
+     * @param updater タスク更新情報
+     * @return 更新用のTask
+     */
+    public static Task of(TaskUpdater updater) {
+        final Task task = new Task();
+        task.taskId = updater.getTaskId();
+        task.userId = updater.getUserId();
+        task.statusId = updater.getStatusId();
+        task.priorityId = updater.getPriorityId();
+        task.startDate = updater.getStartDate();
+        task.endDate = updater.getEndDate();
+        task.termDate = updater.getTermDate();
+        task.updatedBy = String.valueOf(updater.getUserId());
         return task;
     }
 }

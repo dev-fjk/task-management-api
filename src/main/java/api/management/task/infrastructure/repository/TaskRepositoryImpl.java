@@ -1,15 +1,19 @@
 package api.management.task.infrastructure.repository;
 
+import api.management.task.application.common.utility.DateConverterUtil;
 import api.management.task.application.exception.RepositoryControlException;
 import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.domain.factory.TaskResultFactory;
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.domain.model.task.TaskListSelector;
+import api.management.task.domain.model.task.TaskUpdater;
 import api.management.task.domain.repository.TaskRepository;
 import api.management.task.infrastructure.entity.Task;
 import api.management.task.infrastructure.entity.TaskDetail;
 import api.management.task.infrastructure.mapper.TaskMapper;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -24,6 +28,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     private final TaskMapper taskMapper;
     private final TaskResultFactory taskResultFactory;
+    private final Clock clock;
 
     /**
      * {@inheritDoc}
@@ -68,10 +73,26 @@ public class TaskRepositoryImpl implements TaskRepository {
      * {@inheritDoc}
      */
     @Override
+    public Task updateTask(TaskUpdater updater) {
+        // タスク情報と更新日時をMapperに渡して更新処理を行う
+        var task = Task.of(updater);
+        var updatedAt = DateConverterUtil.isoDateTime2Str(LocalDateTime.now(clock));
+        int updateCount = taskMapper.updateTask(task, updatedAt);
+        if (updateCount == 0) {
+            log.error("タスクの更新に失敗しました ユーザーID : {}, タスクID : {}", task.getUserId(), task.getTaskId());
+            throw new RepositoryControlException("タスクの更新に失敗しました タスクID: " + task.getTaskId());
+        }
+        return task;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void deleteTask(long userId, long taskId) {
         int deleteCount = taskMapper.deleteTask(userId, taskId);
         if (deleteCount == 0) {
-            log.warn("タスクの削除に失敗しました ユーザーID : {}, タスクID : {}", userId, taskId);
+            log.error("タスクの削除に失敗しました ユーザーID : {}, タスクID : {}", userId, taskId);
             throw new RepositoryControlException("タスクの削除に失敗しました タスクID: " + taskId);
         }
     }

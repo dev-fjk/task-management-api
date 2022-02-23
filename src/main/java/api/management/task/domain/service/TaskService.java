@@ -4,6 +4,7 @@ import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.domain.model.task.TaskListSelector;
 import api.management.task.domain.model.task.TaskRegister;
+import api.management.task.domain.model.task.TaskUpdater;
 
 /**
  * タスク情報のサービス
@@ -36,6 +37,14 @@ public interface TaskService {
      * @return タスクID
      */
     long register(final TaskRegister register);
+
+    /**
+     * タスクを更新する
+     *
+     * @param updater タスク更新情報
+     * @return 更新したタスク情報
+     */
+    TaskResult updateTask(final TaskUpdater updater);
 
     /**
      * ユーザーのタスクを削除する

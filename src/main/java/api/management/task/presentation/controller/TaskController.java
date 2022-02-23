@@ -3,10 +3,12 @@ package api.management.task.presentation.controller;
 import api.management.task.application.common.constant.OpenApiConstant;
 import api.management.task.domain.model.task.TaskListSelector;
 import api.management.task.domain.model.task.TaskRegister;
+import api.management.task.domain.model.task.TaskUpdater;
 import api.management.task.domain.service.TaskService;
 import api.management.task.presentation.converter.ResponseConverter;
 import api.management.task.presentation.helper.TaskListSelectorHelper;
 import api.management.task.presentation.model.request.TaskAddRequest;
+import api.management.task.presentation.model.request.TaskUpdateRequest;
 import api.management.task.presentation.model.response.UserTaskListResponse;
 import api.management.task.presentation.model.response.UserTaskResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,7 +74,7 @@ public class TaskController {
             @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
             @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
             @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
-            @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
+            @ApiResponse(responseCode = "404", ref = OpenApiConstant.TASK_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
     public ResponseEntity<?> fetchUserTask(@PathVariable("user-id") @Min(1) long userId,
@@ -120,7 +123,8 @@ public class TaskController {
     /**
      * タスクを追加する
      *
-     * @param userId ユーザーID
+     * @param userId     ユーザーID
+     * @param addRequest タスク追加リクエスト
      * @return Locationヘッダー に追加したタスクを取得するURIを設定し返却
      */
     @PostMapping(path = "/users/{user-id}/tasks")
@@ -143,6 +147,39 @@ public class TaskController {
         return ResponseEntity.created(
                 this.taskLocationUri(userId, taskService.register(TaskRegister.of(userId, addRequest)))
         ).build();
+    }
+
+    /**
+     * ユーザーのタスク情報を更新する
+     *
+     * @param userId        ユーザーID
+     * @param taskId        タスクID
+     * @param updateRequest タスク更新リクエスト
+     * @return 更新したタスク情報
+     */
+    @PutMapping(path = "/users/{user-id}/tasks/{task-id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "ユーザーのタスクを更新")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "更新したユーザーのタスク情報", content = @Content(
+                    schema = @Schema(implementation = UserTaskResponse.class),
+                    mediaType = MediaType.APPLICATION_JSON_VALUE
+            )),
+            @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
+            @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
+            @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
+            @ApiResponse(responseCode = "404", ref = OpenApiConstant.TASK_NOT_FOUND),
+            @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
+    })
+    public ResponseEntity<?> updateUserTask(@PathVariable("user-id") @Min(1) long userId,
+                                            @PathVariable("task-id") @Min(1) long taskId,
+                                            @Validated @RequestBody TaskUpdateRequest updateRequest) {
+        // 更新したタスクの詳細情報を返却する
+        return ResponseEntity.ok(responseConverter.convert(
+                taskService.updateTask(TaskUpdater.of(userId, taskId, updateRequest)))
+        );
     }
 
     /**

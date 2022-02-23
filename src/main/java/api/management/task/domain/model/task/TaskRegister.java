@@ -4,26 +4,27 @@ import api.management.task.presentation.model.request.TaskAddRequest;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Value;
 
 /**
  * Taskの登録情報を持つクラス
  */
-@Value
-@Builder(access = AccessLevel.PRIVATE)
+@Data
+@Builder
 public class TaskRegister {
 
-    long userId;
+    private long userId;
 
-    Integer statusId;
+    private Integer statusId;
 
-    Integer priorityId;
+    private Integer priorityId;
 
-    LocalDate startDate;
+    private LocalDate startDate;
 
-    LocalDate endDate;
+    private  LocalDate endDate;
 
-    LocalDate termDate;
+    private LocalDate termDate;
 
     /**
      * TaskRegisterクラスを生成する

@@ -3,6 +3,7 @@ package api.management.task.domain.repository;
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.domain.model.task.TaskListSelector;
+import api.management.task.domain.model.task.TaskUpdater;
 import api.management.task.infrastructure.entity.Task;
 import api.management.task.infrastructure.entity.TaskDetail;
 
@@ -37,6 +38,14 @@ public interface TaskRepository {
      * @return DB登録されたタスク情報
      */
     Task register(final Task task);
+
+    /**
+     * タスクを更新する
+     *
+     * @param updater タスク更新情報
+     * @return 更新に使用したタスク
+     */
+    Task updateTask(final TaskUpdater updater);
 
     /**
      * ユーザーのタスクを削除する
