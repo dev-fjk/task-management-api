@@ -2,7 +2,8 @@ package api.management.task.domain.service;
 
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
-import api.management.task.domain.model.selector.TaskListSelector;
+import api.management.task.domain.model.task.TaskListSelector;
+import api.management.task.domain.model.task.TaskRegister;
 
 /**
  * タスク情報のサービス
@@ -27,4 +28,12 @@ public interface TaskService {
      * @return {@link TaskResultList}
      */
     TaskResultList fetchUserTaskList(TaskListSelector selector, int offset, int limit);
+
+    /**
+     * タスクを新規登録する
+     *
+     * @param register タスク登録情報
+     * @return タスクID
+     */
+    long register(final TaskRegister register);
 }

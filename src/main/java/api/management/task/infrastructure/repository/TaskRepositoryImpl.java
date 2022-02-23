@@ -1,11 +1,13 @@
 package api.management.task.infrastructure.repository;
 
+import api.management.task.application.exception.RepositoryControlException;
 import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.domain.factory.TaskResultFactory;
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
-import api.management.task.domain.model.selector.TaskListSelector;
+import api.management.task.domain.model.task.TaskListSelector;
 import api.management.task.domain.repository.TaskRepository;
+import api.management.task.infrastructure.entity.Task;
 import api.management.task.infrastructure.entity.TaskDetail;
 import api.management.task.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +50,19 @@ public class TaskRepositoryImpl implements TaskRepository {
         return taskResultFactory.factory(
                 total, taskMapper.fetchUserTaskDetailList(selector, offset, limit)
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Task register(Task task) {
+        // insert成功時は TaskクラスにDB側で自動採番されたIDが設定される
+        int insertCount = taskMapper.register(task);
+        if (insertCount == 0) {
+            log.error("タスクの新規登録に失敗しました ユーザーID : {}", task.getUserId());
+            throw new RepositoryControlException("タスクの登録に失敗しました");
+        }
+        return task;
     }
 }

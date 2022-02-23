@@ -1,6 +1,6 @@
 package api.management.task.presentation.helper;
 
-import api.management.task.domain.model.selector.TaskListSelector;
+import api.management.task.domain.model.task.TaskListSelector;
 import org.springframework.stereotype.Component;
 
 /**

@@ -1,5 +1,6 @@
 package api.management.task.presentation.handler;
 
+import api.management.task.application.exception.RepositoryControlException;
 import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.presentation.converter.ProblemConverter;
 import api.management.task.presentation.model.response.ProblemResponse;
@@ -64,6 +65,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ProblemResponse> handleResourceNotFoundException(ResourceNotFoundException exception) {
         return this.errorResponses(HttpStatus.NOT_FOUND, problemConverter.convert(exception));
+    }
+
+    /**
+     * インフラ層でのデータ更新時の例外
+     *
+     * @param exception {@link RepositoryControlException}
+     * @return エラーレスポンス
+     */
+    @ExceptionHandler(RepositoryControlException.class)
+    public ResponseEntity<ProblemResponse> handleRepositoryControlException(RepositoryControlException exception) {
+        return this.errorResponses(HttpStatus.INTERNAL_SERVER_ERROR, problemConverter.convert(exception));
     }
 
     /**

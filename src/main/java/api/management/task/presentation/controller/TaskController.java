@@ -1,8 +1,8 @@
 package api.management.task.presentation.controller;
 
 import api.management.task.application.common.constant.OpenApiConstant;
-import api.management.task.domain.model.consts.TaskPriority;
-import api.management.task.domain.model.selector.TaskListSelector;
+import api.management.task.domain.model.task.TaskListSelector;
+import api.management.task.domain.model.task.TaskRegister;
 import api.management.task.domain.service.TaskService;
 import api.management.task.presentation.converter.ResponseConverter;
 import api.management.task.presentation.helper.TaskListSelectorHelper;
@@ -70,7 +70,7 @@ public class TaskController {
             @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
             @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
             @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
-            @ApiResponse(responseCode = "404", ref = OpenApiConstant.TASK_NOT_FOUND),
+            @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
     public ResponseEntity<?> fetchUserTask(@PathVariable("user-id") @Min(1) long userId,
@@ -133,16 +133,27 @@ public class TaskController {
             @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
             @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
             @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
+            @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
-    public ResponseEntity<?> register(
-            @PathVariable("user-id") @Min(1) long userId, @Validated @RequestBody TaskAddRequest addRequest) {
+    public ResponseEntity<?> register(@PathVariable("user-id") @Min(1) long userId,
+                                      @Validated @RequestBody TaskAddRequest addRequest) {
+        // タスクを登録し、登録したタスクの取得に使用するURIをLocationヘッダーに詰めて返却する
+        return ResponseEntity.created(
+                this.taskLocationUri(userId, taskService.register(TaskRegister.of(userId, addRequest)))
+        ).build();
+    }
 
-        System.out.println(TaskPriority.getIdList());
-        System.out.println(addRequest);
-
-        // TODO サービス層から取得した各種IDを使用して LocationHeaderの置換を行う処理を盛り込む
-        URI location = UriComponentsBuilder.newInstance().path(TASK_LOCATION_URI).build().toUri();
-        return ResponseEntity.created(location).build();
+    /**
+     * 登録したタスクのLocationURIを返却する
+     *
+     * @param userId ユーザーID
+     * @param taskId 更新した タスクID
+     * @return LocationURI
+     */
+    private URI taskLocationUri(long userId, long taskId) {
+        return UriComponentsBuilder.newInstance().path(TASK_LOCATION_URI)
+                .buildAndExpand(userId, taskId)
+                .toUri();
     }
 }

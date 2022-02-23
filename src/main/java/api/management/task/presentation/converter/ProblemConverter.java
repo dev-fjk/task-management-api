@@ -1,5 +1,6 @@
 package api.management.task.presentation.converter;
 
+import api.management.task.application.exception.RepositoryControlException;
 import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.presentation.model.response.ProblemResponse;
 import java.nio.file.AccessDeniedException;
@@ -76,12 +77,27 @@ public class ProblemConverter {
     }
 
     /**
+     * データ更新時のエラーを返す
+     *
+     * @param exception {@link RepositoryControlException}
+     * @return {@link ProblemResponse}
+     */
+    public ProblemResponse convert(RepositoryControlException exception) {
+        return ProblemResponse.builder()
+                .title("データの更新に失敗しました")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .detail(exception.getMessage())
+                .build();
+    }
+
+    /**
      * catchされなかったエラーを返す
      *
      * @param exception {@link RuntimeException}
      * @return {@link ProblemResponse}
      */
     public ProblemResponse convert(RuntimeException exception) {
+        exception.printStackTrace();
         return ProblemResponse.builder()
                 .title("予期しないエラーが発生しました")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())

@@ -10,6 +10,7 @@ public class OpenApiConstant {
     public static final String UNAUTHORIZED = "unauthorized";
     public static final String FORBIDDEN = "forbidden";
     public static final String TASK_NOT_FOUND = "taskNotFound";
+    public static final String USER_NOT_FOUND = "userNotFound";
     public static final String INTERNAL_SERVER_ERROR = "internalServerError";
 
     // リソース更新系のキー値

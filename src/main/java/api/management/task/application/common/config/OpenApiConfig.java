@@ -119,6 +119,12 @@ public class OpenApiConfig {
                 .detail("タスク情報が見つかりませんでした")
                 .build()
         );
+        var userNotFound = problemContent(objectMapper, ProblemResponse.builder()
+                .title("リクエストされたリソースは見つかりませんでした")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail("ユーザーが見つかりませんでした ユーザーID: " + 10)
+                .build()
+        );
         var internalServerErrorContent = problemContent(objectMapper, ProblemResponse.builder()
                 .title("リクエストされた操作を完了できませんでした")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -134,6 +140,8 @@ public class OpenApiConfig {
                         .description("許可されていないアクセス").content(forbiddenContent))
                 .addResponses(OpenApiConstant.TASK_NOT_FOUND, new ApiResponse()
                         .description("タスクが見つからない").content(taskNotFound))
+                .addResponses(OpenApiConstant.USER_NOT_FOUND, new ApiResponse()
+                        .description("ユーザーが見つからない").content(userNotFound))
                 .addResponses(OpenApiConstant.TASK_INSERTED_SUCCESS, new ApiResponse()
                         .description("タスクが正常に追加できた")
                         .headers(Map.of("location", headers.get(OpenApiConstant.TASK_INSERT_HEADER_EXAMPLE_KEY)))
