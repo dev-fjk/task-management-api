@@ -7,6 +7,8 @@
 - JDK 11
 - Groovy 3.0
 - Gradle
+- IDE(javaはテキストエディタでの開発は少々厳しいので IntelliJ IDEA(有料版) か Eclipseを推奨)
+- Docker(自前でMySQL用意するなら不要)
 
 ## API仕様書(Swagger UI)
 
@@ -37,11 +39,12 @@ $ docker-compose up -d --build
 
 ### DB初期化手順
 
-- MySQLに直接DDLとDMLを投入する
+- MySQLに直接以下のファイルに配置された DDLとDMLを投入する or コンテナ再作成を行う
+- DBへの接続方法は各自お任せ IntelliJが無ければ MySQL Workbranchあたりを入れておくといい(macなら sequel Proがお勧め)
 
 ~~~
 (1) docker/initdb.d/1_schema.sql を直接MySQLに投入する
-(2) docker/initdb.d/1_schema.sql
+(2) docker/initdb.d/2_initdata.sql　をDBに投入してデータを投入
 ~~~
 
 ## UTについて
