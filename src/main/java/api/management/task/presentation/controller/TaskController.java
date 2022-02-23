@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -124,7 +125,7 @@ public class TaskController {
      */
     @PostMapping(path = "/users/{user-id}/tasks")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "クイズの追加を行う")
+    @Operation(summary = "ユーザーのタスクを追加する")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(schema = @Schema(implementation = TaskAddRequest.class))
     )
@@ -142,6 +143,29 @@ public class TaskController {
         return ResponseEntity.created(
                 this.taskLocationUri(userId, taskService.register(TaskRegister.of(userId, addRequest)))
         ).build();
+    }
+
+    /**
+     * ユーザーのタスク情報を削除する
+     *
+     * @param userId ユーザーID
+     * @param taskId タスクID
+     * @return 空レスポンス
+     */
+    @DeleteMapping(path = "/users/{user-id}/tasks/{task-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "ユーザーのタスクを削除")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", ref = OpenApiConstant.TASK_DELETED_SUCCESS),
+            @ApiResponse(responseCode = "400", ref = OpenApiConstant.BAD_REQUEST),
+            @ApiResponse(responseCode = "401", ref = OpenApiConstant.UNAUTHORIZED),
+            @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
+            @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
+    })
+    public ResponseEntity<?> delete(@PathVariable("user-id") @Min(1) long userId,
+                                    @PathVariable("task-id") @Min(1) long taskId) {
+        taskService.deleteTask(userId, taskId);
+        return ResponseEntity.noContent().build();
     }
 
     /**

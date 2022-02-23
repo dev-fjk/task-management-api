@@ -65,4 +65,16 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
         return task;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteTask(long userId, long taskId) {
+        int deleteCount = taskMapper.deleteTask(userId, taskId);
+        if (deleteCount == 0) {
+            log.warn("タスクの削除に失敗しました ユーザーID : {}, タスクID : {}", userId, taskId);
+            throw new RepositoryControlException("タスクの削除に失敗しました タスクID: " + taskId);
+        }
+    }
 }

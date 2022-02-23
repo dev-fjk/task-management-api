@@ -55,4 +55,13 @@ public class TaskServiceImpl implements TaskService {
         // DB側で自動採番された taskIdの値を返却
         return taskRepository.register(Task.of(register)).getTaskId();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(rollbackFor = Throwable.class, timeout = 15)
+    public void deleteTask(long userId, long taskId) {
+        taskRepository.deleteTask(userId, taskId);
+    }
 }

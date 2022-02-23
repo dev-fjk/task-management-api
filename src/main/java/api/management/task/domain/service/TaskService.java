@@ -36,4 +36,12 @@ public interface TaskService {
      * @return タスクID
      */
     long register(final TaskRegister register);
+
+    /**
+     * ユーザーのタスクを削除する
+     *
+     * @param userId ユーザーID
+     * @param taskId タスクID
+     */
+    void deleteTask(long userId, long taskId);
 }

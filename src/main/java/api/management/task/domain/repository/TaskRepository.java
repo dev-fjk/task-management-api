@@ -37,4 +37,12 @@ public interface TaskRepository {
      * @return DB登録されたタスク情報
      */
     Task register(final Task task);
+
+    /**
+     * ユーザーのタスクを削除する
+     *
+     * @param userId ユーザーID
+     * @param taskId タスクID
+     */
+    void deleteTask(long userId, long taskId);
 }
