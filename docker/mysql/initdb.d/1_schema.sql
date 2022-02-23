@@ -78,7 +78,6 @@ CREATE TABLE task
     created_by  varchar(30) not null comment '作成者',
     updated_at  timestamp   not null default current_timestamp comment '更新日時',
     updated_by  varchar(30) not null comment '更新者',
-    deleted_at  timestamp            default null comment '削除日時',
     PRIMARY KEY (task_id),
     FOREIGN KEY (user_id) REFERENCES task_user (user_id),
     FOREIGN KEY (status_id) REFERENCES task_status_master (status_id),
