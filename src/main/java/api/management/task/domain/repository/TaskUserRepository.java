@@ -12,5 +12,4 @@ public interface TaskUserRepository {
      * @return チェック結果 trueで有効なユーザー
      */
     boolean isEnableUserId(long userId);
-
 }

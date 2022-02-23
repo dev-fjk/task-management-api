@@ -56,10 +56,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     /**
-     * タスクを取得し悲観ロックをかける
-     *
-     * @param taskId タスクID
-     * @return {@link Task}
+     * {@inheritDoc}
      */
     @Override
     public Task fetchTaskForUpdate(long taskId) {
