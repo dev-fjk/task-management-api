@@ -47,9 +47,9 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     @Transactional(rollbackFor = Throwable.class, timeout = 15)
-    public long register(TaskRegister register) {
+    public long registerTask(TaskRegister register) {
         checkEnableUserId(register.getUserId());
-        return taskRepository.register(Task.of(register)).getTaskId(); // DBで自動採番されたタスクIDを返却
+        return taskRepository.registerTask(Task.of(register)).getTaskId(); // DBで自動採番されたタスクIDを返却
     }
 
     /**
@@ -58,10 +58,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional(rollbackFor = Throwable.class, timeout = 15)
     public TaskResult updateTask(TaskUpdater updater) {
-        // TODO 更新前に悲観ロックをかける
-        // 更新したタスク情報の詳細情報を再度取得して返却
-        var updatedTask = taskRepository.updateTask(updater);
-        return taskRepository.fetchUserTask(updatedTask.getUserId(), updatedTask.getTaskId());
+        var task = taskRepository.fetchTaskForUpdate(updater.getTaskId());
+        taskRepository.updateTask(updater);
+        return taskRepository.fetchUserTask(task.getUserId(), task.getTaskId()); // 更新したタスクの詳細情報を返却
     }
 
     /**

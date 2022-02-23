@@ -55,6 +55,14 @@ public interface TaskMapper {
     );
 
     /**
+     * タスクを取得し 悲観ロックをかける
+     *
+     * @param taskId タスクID
+     * @return タスク詳細情報
+     */
+    Optional<Task> fetchTaskForUpdate(@Param("taskId") long taskId);
+
+    /**
      * タスクを新規登録する
      *
      * @param task 登録するタスク情報

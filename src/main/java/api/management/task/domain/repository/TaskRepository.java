@@ -32,20 +32,27 @@ public interface TaskRepository {
     TaskResultList fetchUserTaskList(TaskListSelector selector, int offset, int limit);
 
     /**
+     * タスクを取得し悲観ロックをかける
+     *
+     * @param taskId タスクID
+     * @return {@link Task}
+     */
+    Task fetchTaskForUpdate(long taskId);
+
+    /**
      * タスクを新規登録する
      *
      * @param task DBに登録するタスク情報
      * @return DB登録されたタスク情報
      */
-    Task register(final Task task);
+    Task registerTask(final Task task);
 
     /**
      * タスクを更新する
      *
      * @param updater タスク更新情報
-     * @return 更新に使用したタスク
      */
-    Task updateTask(final TaskUpdater updater);
+    void updateTask(final TaskUpdater updater);
 
     /**
      * ユーザーのタスクを削除する

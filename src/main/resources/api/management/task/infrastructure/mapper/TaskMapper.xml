@@ -18,6 +18,23 @@
         <include refid="offsetAndLimitTemplate"/>
     </select>
 
+    <!-- タスクを取得し悲観ロックをかける -->
+    <select id="fetchTaskForUpdate" resultMap="TaskMap">
+        SELECT
+            task_id,
+            user_id,
+            status_id,
+            priority_id,
+            start_date,
+            end_date,
+            term_date
+        FROM
+            task
+        WHERE
+            task_id = #{taskId}
+        FOR UPDATE
+    </select>
+
     <!-- ユーザーのタスク一覧の件数を取得 -->
     <select id="userTaskCount" resultType="int">
         SELECT
@@ -59,6 +76,17 @@
     </sql>
 
     <!-- Result Maps -->
+    <!-- Taskの変換設定 -->
+    <resultMap type="api.management.task.infrastructure.entity.Task" id="TaskMap">
+        <id property="taskId" column="task_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="statusId" column="status_id" jdbcType="INTEGER"/>
+        <result property="priorityId" column="priority_id" jdbcType="INTEGER"/>
+        <result property="startDate" column="start_date" jdbcType="DATE"/>
+        <result property="endDate" column="end_date" jdbcType="DATE"/>
+        <result property="termDate" column="term_date" jdbcType="DATE"/>
+    </resultMap>
+
     <!-- TaskDetailの変換設定 -->
     <resultMap type="api.management.task.infrastructure.entity.TaskDetail" id="TaskDetailMap">
         <id property="taskId" column="task_id" jdbcType="BIGINT"/>

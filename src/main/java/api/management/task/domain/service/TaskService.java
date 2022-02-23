@@ -36,7 +36,7 @@ public interface TaskService {
      * @param register タスク登録情報
      * @return タスクID
      */
-    long register(final TaskRegister register);
+    long registerTask(final TaskRegister register);
 
     /**
      * タスクを更新する

@@ -56,10 +56,24 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     /**
+     * タスクを取得し悲観ロックをかける
+     *
+     * @param taskId タスクID
+     * @return {@link Task}
+     */
+    @Override
+    public Task fetchTaskForUpdate(long taskId) {
+        return taskMapper.fetchTaskForUpdate(taskId).orElseThrow(() -> {
+            log.error("タスクが見つかりませんでした taskId: {}", taskId);
+            throw new ResourceNotFoundException("タスク情報が見つかりませんでした タスクID:" + taskId);
+        });
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public Task register(Task task) {
+    public Task registerTask(Task task) {
         // insert成功時は TaskクラスにDB側で自動採番されたIDが設定される
         int insertCount = taskMapper.register(task);
         if (insertCount == 0) {
@@ -73,7 +87,7 @@ public class TaskRepositoryImpl implements TaskRepository {
      * {@inheritDoc}
      */
     @Override
-    public Task updateTask(TaskUpdater updater) {
+    public void updateTask(TaskUpdater updater) {
         // タスク情報と更新日時をMapperに渡して更新処理を行う
         var task = Task.of(updater);
         var updatedAt = DateConverterUtil.isoDateTime2Str(LocalDateTime.now(clock));
@@ -82,7 +96,6 @@ public class TaskRepositoryImpl implements TaskRepository {
             log.error("タスクの更新に失敗しました ユーザーID : {}, タスクID : {}", task.getUserId(), task.getTaskId());
             throw new RepositoryControlException("タスクの更新に失敗しました タスクID: " + task.getTaskId());
         }
-        return task;
     }
 
     /**

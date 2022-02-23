@@ -141,11 +141,11 @@ public class TaskController {
             @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
-    public ResponseEntity<?> register(@PathVariable("user-id") @Min(1) long userId,
-                                      @Validated @RequestBody TaskAddRequest addRequest) {
+    public ResponseEntity<?> registerTask(@PathVariable("user-id") @Min(1) long userId,
+                                          @Validated @RequestBody TaskAddRequest addRequest) {
         // タスクを登録し、登録したタスクの取得に使用するURIをLocationヘッダーに詰めて返却する
         return ResponseEntity.created(
-                this.taskLocationUri(userId, taskService.register(TaskRegister.of(userId, addRequest)))
+                this.taskLocationUri(userId, taskService.registerTask(TaskRegister.of(userId, addRequest)))
         ).build();
     }
 
