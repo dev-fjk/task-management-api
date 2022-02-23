@@ -5,6 +5,7 @@ import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.domain.model.task.TaskListSelector;
 import api.management.task.domain.model.task.TaskRegister;
+import api.management.task.domain.model.task.TaskUpdater;
 import api.management.task.domain.repository.TaskRepository;
 import api.management.task.domain.repository.TaskUserRepository;
 import api.management.task.domain.service.TaskService;
@@ -46,9 +47,20 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     @Transactional(rollbackFor = Throwable.class, timeout = 15)
-    public long register(TaskRegister register) {
+    public long registerTask(TaskRegister register) {
         checkEnableUserId(register.getUserId());
-        return taskRepository.register(Task.of(register)).getTaskId(); // DBで自動採番されたタスクIDを返却
+        return taskRepository.registerTask(Task.of(register)).getTaskId(); // DBで自動採番されたタスクIDを返却
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(rollbackFor = Throwable.class, timeout = 15)
+    public TaskResult updateTask(TaskUpdater updater) {
+        var task = taskRepository.fetchTaskForUpdate(updater.getTaskId());
+        taskRepository.updateTask(updater);
+        return taskRepository.fetchUserTask(task.getUserId(), task.getTaskId()); // 更新したタスクの詳細情報を返却
     }
 
     /**

@@ -7,8 +7,7 @@
         <include refid="selectDetailBase"/>
         WHERE
           t.task_id = #{taskId} AND
-          t.user_id = #{userId} AND
-          t.is_deleted = '0'
+          t.user_id = #{userId}
     </select>
 
     <!-- ユーザーのタスク一覧を取得 -->
@@ -17,6 +16,23 @@
         <include refid="selectTaskListFilter"/>
         ORDER BY t.task_id
         <include refid="offsetAndLimitTemplate"/>
+    </select>
+
+    <!-- タスクを取得し悲観ロックをかける -->
+    <select id="fetchTaskForUpdate" resultMap="TaskMap">
+        SELECT
+            task_id,
+            user_id,
+            status_id,
+            priority_id,
+            start_date,
+            end_date,
+            term_date
+        FROM
+            task
+        WHERE
+            task_id = #{taskId}
+        FOR UPDATE
     </select>
 
     <!-- ユーザーのタスク一覧の件数を取得 -->
@@ -51,8 +67,7 @@
     <!-- ユーザーのタスク一覧情報取得時の 検索条件 -->
     <sql id="selectTaskListFilter">
         WHERE
-          t.user_id = #{selector.userId} AND
-          t.is_deleted = '0'
+          t.user_id = #{selector.userId}
     </sql>
 
     <!-- 取得開始位置と取得件数指定時のテンプレート -->
@@ -61,6 +76,17 @@
     </sql>
 
     <!-- Result Maps -->
+    <!-- Taskの変換設定 -->
+    <resultMap type="api.management.task.infrastructure.entity.Task" id="TaskMap">
+        <id property="taskId" column="task_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="statusId" column="status_id" jdbcType="INTEGER"/>
+        <result property="priorityId" column="priority_id" jdbcType="INTEGER"/>
+        <result property="startDate" column="start_date" jdbcType="DATE"/>
+        <result property="endDate" column="end_date" jdbcType="DATE"/>
+        <result property="termDate" column="term_date" jdbcType="DATE"/>
+    </resultMap>
+
     <!-- TaskDetailの変換設定 -->
     <resultMap type="api.management.task.infrastructure.entity.TaskDetail" id="TaskDetailMap">
         <id property="taskId" column="task_id" jdbcType="BIGINT"/>

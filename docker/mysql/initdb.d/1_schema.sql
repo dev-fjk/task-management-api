@@ -79,15 +79,13 @@ CREATE TABLE task
     updated_at  timestamp   not null default current_timestamp comment '更新日時',
     updated_by  varchar(30) not null comment '更新者',
     deleted_at  timestamp            default null comment '削除日時',
-    deleted_by  varchar(30)          default null comment '削除者',
-    is_deleted  tinyint(1)  not null default 0 comment '削除フラグ',
     PRIMARY KEY (task_id),
     FOREIGN KEY (user_id) REFERENCES task_user (user_id),
     FOREIGN KEY (status_id) REFERENCES task_status_master (status_id),
     FOREIGN KEY (priority_id) REFERENCES task_priority_master (priority_id)
 );
 
-create index idx_task_user_id on task (user_id, is_deleted);
-create index idx_task_user_status_id on task (user_id, status_id, is_deleted);
-create index idx_task_user_priority_id on task (user_id, priority_id, is_deleted);
-create index idx_task_user_term on task (user_id, term_date, is_deleted);
+create index idx_task_user_id on task (user_id);
+create index idx_task_user_status_id on task (user_id, status_id);
+create index idx_task_user_priority_id on task (user_id, priority_id);
+create index idx_task_user_term on task (user_id, term_date);

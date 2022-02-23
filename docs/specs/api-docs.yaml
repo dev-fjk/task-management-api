@@ -10,6 +10,118 @@ tags:
   - name: /task/v1/
     description: タスクテーブルの操作用コントローラー
 paths:
+  /task/v1/users/{user-id}/tasks/{task-id}:
+    get:
+      tags:
+        - /task/v1/
+      summary: ユーザーのタスクを取得
+      operationId: fetchUserTask
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+      responses:
+        "404":
+          $ref: '#/components/responses/taskNotFound'
+        "500":
+          $ref: '#/components/responses/internalServerError'
+        "400":
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+        "403":
+          $ref: '#/components/responses/forbidden'
+        "200":
+          description: ユーザーのタスク情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTaskResponse'
+    put:
+      tags:
+        - /task/v1/
+      summary: ユーザーのタスクを更新
+      operationId: updateUserTask
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdateRequest'
+        required: true
+      responses:
+        "404":
+          $ref: '#/components/responses/taskNotFound'
+        "500":
+          $ref: '#/components/responses/internalServerError'
+        "400":
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+        "200":
+          description: 更新したユーザーのタスク情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTaskResponse'
+        "403":
+          $ref: '#/components/responses/forbidden'
+    delete:
+      tags:
+        - /task/v1/
+      summary: ユーザーのタスクを削除
+      operationId: delete
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            minimum: 1
+            type: integer
+            format: int64
+      responses:
+        "204":
+          $ref: '#/components/responses/taskDeletedSuccessfully'
+        "500":
+          $ref: '#/components/responses/internalServerError'
+        "400":
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+        "403":
+          $ref: '#/components/responses/forbidden'
   /task/v1/users/{user-id}/tasks:
     get:
       tags:
@@ -46,19 +158,19 @@ paths:
           $ref: '#/components/responses/badRequest'
         "401":
           $ref: '#/components/responses/unauthorized'
+        "403":
+          $ref: '#/components/responses/forbidden'
         "200":
           description: ユーザーのタスク情報一覧
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserTaskListResponse'
-        "403":
-          $ref: '#/components/responses/forbidden'
     post:
       tags:
         - /task/v1/
-      summary: クイズの追加を行う
-      operationId: register
+      summary: ユーザーのタスクを追加する
+      operationId: registerTask
       parameters:
         - name: user-id
           in: path
@@ -86,46 +198,106 @@ paths:
           $ref: '#/components/responses/userNotFound'
         "403":
           $ref: '#/components/responses/forbidden'
-  /task/v1/users/{user-id}/tasks/{task-id}:
-    get:
-      tags:
-        - /task/v1/
-      summary: ユーザーのタスクを取得
-      operationId: fetchUserTask
-      parameters:
-        - name: user-id
-          in: path
-          required: true
-          schema:
-            minimum: 1
-            type: integer
-            format: int64
-        - name: task-id
-          in: path
-          required: true
-          schema:
-            minimum: 1
-            type: integer
-            format: int64
-      responses:
-        "500":
-          $ref: '#/components/responses/internalServerError'
-        "400":
-          $ref: '#/components/responses/badRequest'
-        "200":
-          description: ユーザーのタスク情報
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserTaskResponse'
-        "401":
-          $ref: '#/components/responses/unauthorized'
-        "404":
-          $ref: '#/components/responses/userNotFound'
-        "403":
-          $ref: '#/components/responses/forbidden'
 components:
   schemas:
+    TaskUpdateRequest:
+      required:
+        - priorityId
+        - statusId
+      type: object
+      properties:
+        statusId:
+          type: integer
+          description: ステータスID
+          format: int32
+          example: 1
+        priorityId:
+          type: integer
+          description: 優先度ID
+          format: int32
+          example: 11
+        startDate:
+          type: string
+          description: 開始日
+          format: date
+          example: 2022-02-15
+        endDate:
+          type: string
+          description: 終了日
+          format: date
+          example: 2022-02-22
+        termDate:
+          type: string
+          description: 期限日
+          format: date
+          example: 2022-02-25
+      description: タスク更新リクエスト
+    TaskPriority:
+      type: string
+      description: "タスクの優先度一覧: \n* `11` - LOW(低)\n* `12` - MIDDLE(中)\n* `13` - HIGH(高\
+        )\n"
+      example: LOW
+      enum:
+        - LOW
+        - MIDDLE
+        - HIGH
+    TaskStatus:
+      type: string
+      description: "タスクのステータス一覧: \n* `1` - TODO(着手前)\n* `2` - PROGRESS(進行中)\n* `3`\
+        \ - WAIT(停止中)\n* `4` - RESOLVED(解決済み)\n"
+      example: TODO
+      enum:
+        - TODO
+        - PROGRESS
+        - WAIT
+        - RESOLVED
+    UserTaskResponse:
+      required:
+        - priority
+        - priorityId
+        - status
+        - statusId
+        - taskId
+        - userId
+      type: object
+      properties:
+        taskId:
+          type: integer
+          description: タスクID
+          format: int64
+          example: 10
+        userId:
+          type: integer
+          description: ユーザーID
+          format: int64
+          example: 100
+        statusId:
+          type: integer
+          description: ステータスID
+          format: int32
+          example: 1
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        priorityId:
+          type: integer
+          description: 優先度ID
+          format: int32
+          example: 11
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        startDate:
+          type: string
+          description: 開始日
+          example: 2022-02-15
+        endDate:
+          type: string
+          description: 終了日
+          example: 2022-02-22
+        termDate:
+          type: string
+          description: 期限日
+          example: 2022-02-25
+      description: ユーザーのタスク情報
     TaskAddRequest:
       required:
         - priorityId
@@ -158,25 +330,6 @@ components:
           format: date
           example: 2022-02-25
       description: タスク追加リクエスト
-    TaskPriority:
-      type: string
-      description: "タスクの優先度一覧: \n* `11` - LOW(低)\n* `12` - MIDDLE(中)\n* `13` - HIGH(高\
-        )\n"
-      example: LOW
-      enum:
-        - LOW
-        - MIDDLE
-        - HIGH
-    TaskStatus:
-      type: string
-      description: "タスクのステータス一覧: \n* `1` - TODO(着手前)\n* `2` - PROGRESS(進行中)\n* `3`\
-        \ - WAIT(停止中)\n* `4` - RESOLVED(解決済み)\n"
-      example: TODO
-      enum:
-        - TODO
-        - PROGRESS
-        - WAIT
-        - RESOLVED
     UserTaskListResponse:
       type: object
       properties:
@@ -247,53 +400,6 @@ components:
           description: 期限日
           example: 2022-02-25
       description: ユーザーのタスク
-    UserTaskResponse:
-      required:
-        - priority
-        - priorityId
-        - status
-        - statusId
-        - taskId
-        - userId
-      type: object
-      properties:
-        taskId:
-          type: integer
-          description: タスクID
-          format: int64
-          example: 10
-        userId:
-          type: integer
-          description: ユーザーID
-          format: int64
-          example: 100
-        statusId:
-          type: integer
-          description: ステータスID
-          format: int32
-          example: 1
-        status:
-          $ref: '#/components/schemas/TaskStatus'
-        priorityId:
-          type: integer
-          description: 優先度ID
-          format: int32
-          example: 11
-        priority:
-          $ref: '#/components/schemas/TaskPriority'
-        startDate:
-          type: string
-          description: 開始日
-          example: 2022-02-15
-        endDate:
-          type: string
-          description: 終了日
-          example: 2022-02-22
-        termDate:
-          type: string
-          description: 期限日
-          example: 2022-02-25
-      description: ユーザーのタスク情報
     ProblemResponse:
       type: object
       properties:
