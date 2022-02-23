@@ -47,12 +47,29 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional(rollbackFor = Throwable.class, timeout = 15)
     public long register(TaskRegister register) {
+        checkEnableUserId(register.getUserId());
+        return taskRepository.register(Task.of(register)).getTaskId(); // DBで自動採番されたタスクIDを返却
+    }
 
-        if (!taskUserRepository.isEnableUserId(register.getUserId())) {
-            log.error("無効なユーザーIDです : {}", register.getUserId());
-            throw new ResourceNotFoundException("ユーザーが見つかりませんでした ユーザーID: " + register.getUserId());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(rollbackFor = Throwable.class, timeout = 15)
+    public void deleteTask(long userId, long taskId) {
+        checkEnableUserId(userId);
+        taskRepository.deleteTask(userId, taskId);
+    }
+
+    /**
+     * ユーザーが存在するかチェックする　無効なIDの場合404エラーを返す
+     *
+     * @param userId ユーザーId
+     */
+    private void checkEnableUserId(long userId) {
+        if (!taskUserRepository.isEnableUserId(userId)) {
+            log.error("無効なユーザーIDです : {}", userId);
+            throw new ResourceNotFoundException("ユーザーが見つかりませんでした ユーザーID: " + userId);
         }
-        // DB側で自動採番された taskIdの値を返却
-        return taskRepository.register(Task.of(register)).getTaskId();
     }
 }
