@@ -40,7 +40,6 @@ $ docker-compose up -d --build
 ### DB初期化手順
 
 - MySQLに直接以下のファイルに配置された DDLとDMLを投入する or コンテナ再作成を行う
-- DBへの接続方法は各自お任せ IntelliJが無ければ MySQL Workbranchあたりを入れておくといい(macなら sequel Proがお勧め)
 
 ~~~
 (1) docker/initdb.d/1_schema.sql を直接MySQLに投入する
