@@ -2,11 +2,9 @@ package api.management.task.presentation.controller;
 
 import api.management.task.application.common.constant.OpenApiConstant;
 import api.management.task.domain.model.task.TaskListSelector;
-import api.management.task.domain.model.task.TaskRegister;
-import api.management.task.domain.model.task.TaskUpdater;
 import api.management.task.domain.service.TaskService;
 import api.management.task.presentation.converter.ResponseConverter;
-import api.management.task.presentation.helper.TaskListSelectorHelper;
+import api.management.task.presentation.helper.TaskHelper;
 import api.management.task.presentation.model.request.TaskAddRequest;
 import api.management.task.presentation.model.request.TaskUpdateRequest;
 import api.management.task.presentation.model.response.UserTaskListResponse;
@@ -52,7 +50,7 @@ public class TaskController {
 
     private final TaskService taskService;
     private final ResponseConverter responseConverter;
-    private final TaskListSelectorHelper taskListSelectorHelper;
+    private final TaskHelper taskHelper;
 
     /**
      * ユーザーのタスク情報を取得する
@@ -113,7 +111,7 @@ public class TaskController {
             @RequestParam(name = "limit", required = false, defaultValue = "20") @Range(min = 1, max = 50) int limit) {
         // GETのため 検索条件はクエリパラメータからバラバラの引数として受け取り helperで検索条件をマージしている
         // 後々 検索条件がかなり複雑になりそうであれば FacadeService経由で変換用のサービスを切ってもいいかもしれない(現状はユーザーIDだけ)
-        final TaskListSelector selector = taskListSelectorHelper.selector(userId);
+        final TaskListSelector selector = taskHelper.toSelector(userId);
         return ResponseEntity.ok(
                 // DBへの検索用にServiceには取得開始位置を -1 して渡す
                 responseConverter.convert(offset, taskService.fetchUserTaskList(selector, (offset - 1), limit))
@@ -145,7 +143,7 @@ public class TaskController {
                                           @Validated @RequestBody TaskAddRequest addRequest) {
         // タスクを登録し、登録したタスクの取得に使用するURIをLocationヘッダーに詰めて返却する
         return ResponseEntity.created(
-                this.taskLocationUri(userId, taskService.registerTask(TaskRegister.of(userId, addRequest)))
+                this.taskLocationUri(userId, taskService.registerTask(taskHelper.toRegister(userId, addRequest)))
         ).build();
     }
 
@@ -178,7 +176,7 @@ public class TaskController {
                                             @Validated @RequestBody TaskUpdateRequest updateRequest) {
         // 更新したタスクの詳細情報を返却する
         return ResponseEntity.ok(responseConverter.convert(
-                taskService.updateTask(TaskUpdater.of(userId, taskId, updateRequest)))
+                taskService.updateTask(taskHelper.toUpdater(userId, taskId, updateRequest)))
         );
     }
 
