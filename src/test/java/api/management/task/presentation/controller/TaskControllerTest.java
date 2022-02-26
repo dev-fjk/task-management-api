@@ -13,6 +13,7 @@ import api.management.task.presentation.converter.ResponseConverter;
 import api.management.task.presentation.helper.TaskHelper;
 import api.management.task.presentation.model.response.UserTaskResponse;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +45,7 @@ class TaskControllerTest {
     @MockBean
     TaskHelper taskHelper;
 
+    @BeforeEach
     public void initTest() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
