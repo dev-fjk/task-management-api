@@ -59,7 +59,7 @@ public class TaskController {
      * @param taskId タスクID
      * @return ユーザーのタスク情報
      */
-    @GetMapping(path = "/users/{user-id}/tasks/{task-id}")
+    @GetMapping(path = "/users/{userId}/tasks/{taskId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "ユーザーのタスクを取得")
     @ApiResponses({
@@ -75,8 +75,8 @@ public class TaskController {
             @ApiResponse(responseCode = "404", ref = OpenApiConstant.TASK_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
-    public ResponseEntity<?> fetchUserTask(@PathVariable("user-id") @Min(1) long userId,
-                                           @PathVariable("task-id") @Min(1) long taskId) {
+    public ResponseEntity<?> fetchUserTask(@PathVariable("userId") @Min(1) long userId,
+                                           @PathVariable("taskId") @Min(1) long taskId) {
         return ResponseEntity.ok(responseConverter.convert(
                 taskService.fetchUserTask(userId, taskId))
         );
@@ -90,7 +90,7 @@ public class TaskController {
      * @param limit  取得件数
      * @return ユーザーのタスク情報一覧
      */
-    @GetMapping(path = "/users/{user-id}/tasks")
+    @GetMapping(path = "/users/{userId}/tasks")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "ユーザーのタスク一覧を取得")
     @ApiResponses({
@@ -106,7 +106,7 @@ public class TaskController {
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
     public ResponseEntity<?> fetchUserTaskList(
-            @PathVariable("user-id") @Min(1) long userId,
+            @PathVariable("userId") @Min(1) long userId,
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") @Range(min = 1, max = 50) int limit) {
         // GETのため 検索条件はクエリパラメータからバラバラの引数として受け取り helperで検索条件をマージしている
@@ -125,7 +125,7 @@ public class TaskController {
      * @param addRequest タスク追加リクエスト
      * @return Locationヘッダー に追加したタスクを取得するURIを設定し返却
      */
-    @PostMapping(path = "/users/{user-id}/tasks")
+    @PostMapping(path = "/users/{userId}/tasks")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "ユーザーのタスクを追加する")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -139,7 +139,7 @@ public class TaskController {
             @ApiResponse(responseCode = "404", ref = OpenApiConstant.USER_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
-    public ResponseEntity<?> registerTask(@PathVariable("user-id") @Min(1) long userId,
+    public ResponseEntity<?> registerTask(@PathVariable("userId") @Min(1) long userId,
                                           @Validated @RequestBody TaskAddRequest addRequest) {
         // タスクを登録し、登録したタスクの取得に使用するURIをLocationヘッダーに詰めて返却する
         return ResponseEntity.created(
@@ -155,7 +155,7 @@ public class TaskController {
      * @param updateRequest タスク更新リクエスト
      * @return 更新したタスク情報
      */
-    @PutMapping(path = "/users/{user-id}/tasks/{task-id}")
+    @PutMapping(path = "/users/{userId}/tasks/{taskId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "ユーザーのタスクを更新")
     @ApiResponses({
@@ -171,8 +171,8 @@ public class TaskController {
             @ApiResponse(responseCode = "404", ref = OpenApiConstant.TASK_NOT_FOUND),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
-    public ResponseEntity<?> updateUserTask(@PathVariable("user-id") @Min(1) long userId,
-                                            @PathVariable("task-id") @Min(1) long taskId,
+    public ResponseEntity<?> updateUserTask(@PathVariable("userId") @Min(1) long userId,
+                                            @PathVariable("taskId") @Min(1) long taskId,
                                             @Validated @RequestBody TaskUpdateRequest updateRequest) {
         // 更新したタスクの詳細情報を返却する
         return ResponseEntity.ok(responseConverter.convert(
@@ -187,7 +187,7 @@ public class TaskController {
      * @param taskId タスクID
      * @return 空レスポンス
      */
-    @DeleteMapping(path = "/users/{user-id}/tasks/{task-id}")
+    @DeleteMapping(path = "/users/{userId}/tasks/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "ユーザーのタスクを削除")
     @ApiResponses({
@@ -197,8 +197,8 @@ public class TaskController {
             @ApiResponse(responseCode = "403", ref = OpenApiConstant.FORBIDDEN),
             @ApiResponse(responseCode = "500", ref = OpenApiConstant.INTERNAL_SERVER_ERROR),
     })
-    public ResponseEntity<?> delete(@PathVariable("user-id") @Min(1) long userId,
-                                    @PathVariable("task-id") @Min(1) long taskId) {
+    public ResponseEntity<?> delete(@PathVariable("userId") @Min(1) long userId,
+                                    @PathVariable("taskId") @Min(1) long taskId) {
         taskService.deleteTask(userId, taskId);
         return ResponseEntity.noContent().build();
     }
