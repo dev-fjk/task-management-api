@@ -15,13 +15,13 @@ import lombok.ToString;
 @Data
 public class Task {
 
-    private long taskId;
+    private Long taskId;
 
-    private long userId;
+    private Long userId;
 
-    private int statusId;
+    private Integer statusId;
 
-    private int priorityId;
+    private Integer priorityId;
 
     private LocalDate startDate;
 

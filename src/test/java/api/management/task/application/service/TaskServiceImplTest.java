@@ -1,15 +1,19 @@
 package api.management.task.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import api.management.task.application.exception.ResourceNotFoundException;
 import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.domain.model.task.TaskListSelector;
+import api.management.task.domain.model.task.TaskRegister;
 import api.management.task.domain.repository.TaskRepository;
 import api.management.task.domain.repository.TaskUserRepository;
+import api.management.task.infrastructure.entity.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +33,7 @@ class TaskServiceImplTest {
     private TaskUserRepository taskUserRepository;
 
     @BeforeEach
-    public void init() {
+    public void testInit() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -66,5 +70,44 @@ class TaskServiceImplTest {
         var expected = target.fetchUserTaskList(selector, offSet, limit);
         assertEquals(taskResultList, expected);
         verify(taskRepository, times(1)).fetchUserTaskList(selector, offSet, limit);
+    }
+
+    @Test
+    @DisplayName("ユーザーのタスク登録_穴あけ")
+    public void 正常系_registerTask() {
+        // given
+        var userId = 10L;
+        var expectedTaskId = 100L;
+        var register = TaskRegister.builder().userId(10L).build();
+
+        // and
+        var task = new Task();
+        task.setTaskId(expectedTaskId);
+
+        // mocks
+        doReturn(true).when(taskUserRepository).isEnableUserId(userId);
+        doReturn(task).when(taskRepository).registerTask(Task.of(register));
+
+        // when-then
+        var actual = target.registerTask(register);
+        assertEquals(expectedTaskId, actual);
+        verify(taskUserRepository, times(1)).isEnableUserId(userId);
+        verify(taskRepository, times(1)).registerTask(Task.of(register));
+    }
+
+    @Test
+    @DisplayName("ユーザーのタスク登録_無効なユーザーの場合 リソースが存在しないエラーが返却")
+    public void 異常系_registerTask() {
+        // given
+        var userId = 10L;
+        var register = TaskRegister.builder().userId(10L).build();
+
+        // mocks
+        doReturn(false).when(taskUserRepository).isEnableUserId(userId);
+
+        // when-then
+        Throwable exception = assertThrows(ResourceNotFoundException.class, () -> target.registerTask(register));
+        assertEquals(exception.getMessage(), "ユーザーが見つかりませんでした ユーザーID: " + userId);
+        verify(taskUserRepository, times(1)).isEnableUserId(userId);
     }
 }
