@@ -2,6 +2,7 @@ package api.management.task.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,7 @@ import api.management.task.domain.model.result.TaskResult;
 import api.management.task.domain.model.result.TaskResultList;
 import api.management.task.domain.model.task.TaskListSelector;
 import api.management.task.domain.model.task.TaskRegister;
+import api.management.task.domain.model.task.TaskUpdater;
 import api.management.task.domain.repository.TaskRepository;
 import api.management.task.domain.repository.TaskUserRepository;
 import api.management.task.infrastructure.entity.Task;
@@ -41,8 +43,8 @@ class TaskServiceImplTest {
     @DisplayName("ユーザーのタスク取得_穴あけ")
     public void 正常系_fetchUserTask() {
         // given
-        long userId = 10L;
-        long taskId = 100L;
+        var userId = 10L;
+        var taskId = 100L;
 
         // mocks
         var taskResult = TaskResult.builder().build();
@@ -107,6 +109,66 @@ class TaskServiceImplTest {
 
         // when-then
         Throwable exception = assertThrows(ResourceNotFoundException.class, () -> target.registerTask(register));
+        assertEquals(exception.getMessage(), "ユーザーが見つかりませんでした ユーザーID: " + userId);
+        verify(taskUserRepository, times(1)).isEnableUserId(userId);
+    }
+
+    @Test
+    @DisplayName("ユーザーのタスク更新_穴あけ")
+    public void 正常系_updateTask() {
+        // given
+        var userId = 10L;
+        var taskId = 100L;
+        var updater = TaskUpdater.builder().userId(10L).taskId(taskId).build();
+
+        // and
+        var task = new Task();
+        task.setUserId(userId);
+        task.setTaskId(taskId);
+
+        // mocks
+        var taskResult = TaskResult.builder().build();
+        doReturn(task).when(taskRepository).fetchTaskForUpdate(taskId);
+        doNothing().when(taskRepository).updateTask(updater);
+        doReturn(taskResult).when(taskRepository).fetchUserTask(userId, taskId);
+
+        // when-then
+        var actual = target.updateTask(updater);
+        assertEquals(taskResult, actual);
+        verify(taskRepository, times(1)).fetchTaskForUpdate(taskId);
+        verify(taskRepository, times(1)).updateTask(updater);
+        verify(taskRepository, times(1)).fetchUserTask(userId, taskId);
+    }
+
+    @Test
+    @DisplayName("ユーザーのタスク削除_穴あけ")
+    public void 正常系_deleteTask() {
+        // given
+        var userId = 10L;
+        var taskId = 100L;
+
+        // mocks
+        doReturn(true).when(taskUserRepository).isEnableUserId(userId);
+        doNothing().when(taskRepository).deleteTask(userId, taskId);
+
+        // when-then
+        target.deleteTask(userId, taskId);
+        verify(taskUserRepository, times(1)).isEnableUserId(userId);
+        verify(taskRepository, times(1)).deleteTask(userId, taskId);
+    }
+
+    @Test
+    @DisplayName("ユーザーのタスク削除_無効なユーザーの場合 リソースが存在しないエラーが返却")
+    public void 異常系_deleteTask() {
+        // given
+        var userId = 10L;
+        var taskId = 100L;
+
+        // mocks
+        doReturn(false).when(taskUserRepository).isEnableUserId(userId);
+
+        // when-then
+        Throwable exception = assertThrows(ResourceNotFoundException.class, () -> target.deleteTask(userId, taskId));
         assertEquals(exception.getMessage(), "ユーザーが見つかりませんでした ユーザーID: " + userId);
         verify(taskUserRepository, times(1)).isEnableUserId(userId);
     }
