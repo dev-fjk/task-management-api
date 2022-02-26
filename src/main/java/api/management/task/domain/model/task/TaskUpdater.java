@@ -12,9 +12,9 @@ import lombok.Data;
 @Builder
 public class TaskUpdater {
 
-    private long taskId;
+    private Long taskId;
 
-    private long userId;
+    private Long userId;
 
     private Integer statusId;
 

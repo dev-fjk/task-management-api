@@ -12,15 +12,15 @@ import lombok.Value;
 @Builder
 public class TaskResult {
 
-    long taskId;
+    Long taskId;
 
-    long userId;
+    Long userId;
 
-    int statusId;
+    Integer statusId;
 
     TaskStatus status;
 
-    int priorityId;
+    Integer priorityId;
 
     TaskPriority priority;
 

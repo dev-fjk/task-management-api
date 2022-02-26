@@ -67,5 +67,4 @@ class GlobalExceptionHandlerSpec extends Specification {
             body != null
         }
     }
-
 }

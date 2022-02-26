@@ -5,23 +5,23 @@ import api.management.task.domain.model.task.TaskUpdater;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
 /**
  * タスクテーブル Entity
  */
-@Getter
-@ToString
+@Data
 public class Task {
 
-    private long taskId;
+    private Long taskId;
 
-    private long userId;
+    private Long userId;
 
-    private int statusId;
+    private Integer statusId;
 
-    private int priorityId;
+    private Integer priorityId;
 
     private LocalDate startDate;
 

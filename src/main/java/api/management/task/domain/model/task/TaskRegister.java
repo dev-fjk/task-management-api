@@ -11,7 +11,7 @@ import lombok.Data;
 @Builder
 public class TaskRegister {
 
-    private long userId;
+    private Long userId;
 
     private Integer statusId;
 
