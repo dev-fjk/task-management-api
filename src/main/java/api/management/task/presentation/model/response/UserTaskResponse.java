@@ -16,19 +16,19 @@ import lombok.Value;
 public class UserTaskResponse {
 
     @Schema(description = "タスクID", example = "10", required = true)
-    long taskId;
+    Long taskId;
 
     @Schema(description = "ユーザーID", example = "100", required = true)
-    long userId;
+    Long userId;
 
     @Schema(description = "ステータスID", example = "1", required = true)
-    int statusId;
+    Integer statusId;
 
     @Schema(description = "ステータス", example = "TODO", required = true)
     TaskStatus status;
 
     @Schema(description = "優先度ID", example = "11", required = true)
-    int priorityId;
+    Integer priorityId;
 
     @Schema(description = "優先度", example = "LOW", required = true)
     TaskPriority priority;

@@ -9,5 +9,5 @@ import lombok.Data;
 @Data
 @Builder
 public class TaskListSelector {
-    private long userId;
+    private Long userId;
 }
