@@ -29,7 +29,7 @@ class TaskServiceImplTest {
     private TaskUserRepository taskUserRepository;
 
     @BeforeEach
-    public void beforeEach() {
+    public void init() {
         MockitoAnnotations.openMocks(this);
     }
 

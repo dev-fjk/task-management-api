@@ -47,14 +47,11 @@ $ docker-compose up -d --build
 ~~~
 
 ## UTについて
-- Javaでテストを書きたい場合は junit5 Groovyでテストを書きたい場合はSpockを使用する
-    - junitで無いと対応できないケース以外では spockで書くことを推奨する 
-    - junitに比べると圧倒的な保守性の高さを誇るため 
-- junitはjavaパッケージ配下で作成し javaで書く
-    - groovyでJunitも書けるらしいが それならSpock使った方が100倍楽なので割愛
-- groovyパッケージ配下では Spockでテストを書く
-
-■ 命名規則
+- src/test/javaパッケージ配下では java + junit5でテストを作成する
+- src/test/groovyパッケージ配下では groovy + Spockでテストを作成する
+    - junitで無いと対応できないケース以外では spockで書くことを推奨
+    
+■ テストクラス 命名規則
 ~~~
 ■ Junit5
 ~Test.java
